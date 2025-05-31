@@ -15,7 +15,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 # 外部封面圖連結（可更換）
-DEFAULT_COVER_URL = "https://github.com/Novemk/vocal-mixerSTR/blob/main/default_cover.png?raw=true"
+DEFAULT_COVER_URL = "https://drive.google.com/uc?export=download&id=1_rq6nXU-3yJJq8HyIrUtGwRMZI6FrAsz"
 
 HTML = '''
 <!doctype html>
@@ -75,7 +75,9 @@ def upload_file():
                 font = ImageFont.truetype("DejaVuSans-Bold.ttf", 40)
             except:
                 font = ImageFont.load_default()
-            w, h = draw.textsize(singer, font=font)
+            bbox = draw.textbbox((0, 0), singer, font=font)
+            w = bbox[2] - bbox[0]
+            h = bbox[3] - bbox[1]
             draw.rectangle([(0, 660), (720, 720)], fill="black")
             draw.text(((720 - w) / 2, 675), singer, font=font, fill="white")
             final_cover_path = os.path.join(OUTPUT_FOLDER, f"{uid}_finalcover.jpg")
