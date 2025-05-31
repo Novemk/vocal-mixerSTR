@@ -1,6 +1,7 @@
 from flask import Flask, render_template_string, request, send_file
 from pydub import AudioSegment
-from moviepy.editor import AudioFileClip, ImageClip, CompositeVideoClip, TextClip
+from moviepy.editor import AudioFileClip, ImageClip, CompositeVideoClip
+from PIL import Image, ImageDraw, ImageFont
 import os
 import uuid
 import requests
@@ -13,6 +14,9 @@ OUTPUT_FOLDER = 'outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
+# 外部封面圖連結（可更換）
+DEFAULT_COVER_URL = "https://drive.google.com/uc?export=download&id=1_rq6nXU-3yJJq8HyIrUtGwRMZI6FrAsz"
+
 HTML = '''
 <!doctype html>
 <title>Cetro - 5.M.A [reimagined] Challenge</title>
@@ -21,10 +25,7 @@ HTML = '''
   <label>上傳你的清唱音檔（MP3 或 WAV）</label><br>
   <input type=file name=vocal accept=".mp3,.wav" required><br><br>
 
-  <label>上傳你的封面圖片（正方形）</label><br>
-  <input type=file name=cover accept="image/*"><br><br>
-
-  <label>輸入歌唱者名稱（會顯示在影片封面上）</label><br>
+  <label>輸入歌唱者名稱（將印在封面下方）</label><br>
   <input type=text name=singer placeholder="你的名字"><br><br>
 
   <input type=submit value="上傳並合成 MP4 🎬">
@@ -39,58 +40,55 @@ def upload_file():
     output_url = None
     if request.method == 'POST':
         file = request.files['vocal']
-        cover = request.files.get('cover')
-        singer = request.form.get('singer', 'Unknown')
+        singer = request.form.get('singer', 'Unknown Artist')
 
         if file:
             ext = file.filename.split('.')[-1].lower()
             if ext not in ['mp3', 'wav']:
                 return "請上傳 mp3 或 wav 格式的清唱檔案。"
 
-            unique_id = str(uuid.uuid4())
-            input_audio_path = os.path.join(UPLOAD_FOLDER, f"{unique_id}.{ext}")
-            file.save(input_audio_path)
-            vocal = AudioSegment.from_file(input_audio_path, format=ext)
+            uid = str(uuid.uuid4())
+            vocal_path = os.path.join(UPLOAD_FOLDER, f"{uid}.{ext}")
+            file.save(vocal_path)
+            vocal = AudioSegment.from_file(vocal_path, format=ext)
 
-            # 封面處理
-            if cover:
-                cover_ext = cover.filename.split('.')[-1].lower()
-                cover_path = os.path.join(UPLOAD_FOLDER, f"{unique_id}_cover.{cover_ext}")
-                cover.save(cover_path)
-            else:
-                # 預設封面
-                cover_path = "default_cover.jpg"  # 請替換為實際預設封面圖
-
-            # 下載伴奏
+            # 載入伴奏
             drive_url = "https://drive.google.com/uc?export=download&id=14i05ZGKqpzaoufhQmBHXrnfYbMqZGhPk"
             response = requests.get(drive_url)
             background = AudioSegment.from_file(BytesIO(response.content), format="wav")
-
             if len(background) < len(vocal):
                 background *= (len(vocal) // len(background) + 1)
             background = background[:len(vocal)]
-
             mixed = background - 6
             mixed = mixed.overlay(vocal + 3)
 
-            mixed_audio_path = os.path.join(OUTPUT_FOLDER, f"{unique_id}_audio.mp3")
-            mixed.export(mixed_audio_path, format='mp3')
+            # 匯出混音音訊
+            audio_path = os.path.join(OUTPUT_FOLDER, f"{uid}_audio.mp3")
+            mixed.export(audio_path, format='mp3')
 
-            # 產出影片（封面圖 + 音訊 + 文字）
-            audio_clip = AudioFileClip(mixed_audio_path)
-            image_clip = ImageClip(cover_path).set_duration(audio_clip.duration).resize((720, 720))
+            # 下載封面並加字
+            cover_response = requests.get(DEFAULT_COVER_URL)
+            img = Image.open(BytesIO(cover_response.content)).convert("RGB")
+            img = img.resize((720, 720))
+            draw = ImageDraw.Draw(img)
+            try:
+                font = ImageFont.truetype("DejaVuSans-Bold.ttf", 40)
+            except:
+                font = ImageFont.load_default()
+            w, h = draw.textsize(singer, font=font)
+            draw.rectangle([(0, 660), (720, 720)], fill="black")
+            draw.text(((720 - w) / 2, 675), singer, font=font, fill="white")
+            final_cover_path = os.path.join(OUTPUT_FOLDER, f"{uid}_finalcover.jpg")
+            img.save(final_cover_path)
 
-            # 歌唱者名字貼上圖
-            text_clip = TextClip(singer, fontsize=36, color='white', bg_color='black', font='Arial-Bold')\
-                .set_duration(audio_clip.duration).set_position(('center', 'bottom'))
+            # 合成影片
+            audioclip = AudioFileClip(audio_path)
+            imageclip = ImageClip(final_cover_path).set_duration(audioclip.duration)
+            videoclip = CompositeVideoClip([imageclip.set_audio(audioclip)])
+            video_path = os.path.join(OUTPUT_FOLDER, f"{uid}.mp4")
+            videoclip.write_videofile(video_path, codec='libx264', fps=24)
 
-            video = CompositeVideoClip([image_clip, text_clip])
-            video = video.set_audio(audio_clip)
-
-            output_video_path = os.path.join(OUTPUT_FOLDER, f"{unique_id}.mp4")
-            video.write_videofile(output_video_path, fps=24, codec='libx264')
-
-            output_url = f'/download/{unique_id}.mp4'
+            output_url = f"/download/{uid}.mp4"
 
     return render_template_string(HTML, output_url=output_url)
 
