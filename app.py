@@ -15,7 +15,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 # 外部封面圖連結（可更換）
-DEFAULT_COVER_URL = "https://drive.google.com/uc?export=download&id=1_rq6nXU-3yJJq8HyIrUtGwRMZI6FrAsz"
+DEFAULT_COVER_URL = "https://github.com/Novemk/vocal-mixerSTR/blob/main/default_cover.png?raw=true"
 
 HTML = '''
 <!doctype html>
