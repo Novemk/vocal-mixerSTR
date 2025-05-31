@@ -42,24 +42,29 @@
       margin-top: 1rem;
       margin-bottom: 0.5rem;
     }
-    input, select, button {
+    input, select {
       width: 100%;
       padding: 0.75rem;
       font-size: 1rem;
       border-radius: 10px;
       border: none;
       margin-bottom: 1rem;
-    }
-    input, select {
       background-color: #121212;
       color: #fff;
       border: 1px solid #444;
     }
     button {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      border: none;
+      margin-top: 1rem;
       background-color: #ffd700;
       color: #000;
       font-weight: bold;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
     button:hover {
       background-color: #ffcc00;
@@ -69,6 +74,7 @@
       background: #222;
       border-radius: 10px;
       overflow: hidden;
+      margin-top: 1rem;
     }
     .progress-bar {
       background-color: #ffd700;
@@ -83,12 +89,16 @@
       text-align: center;
       margin-bottom: 0.5rem;
       color: #ccc;
+      display: none;
     }
     #downloadLink {
       display: none;
-      margin-top: 1rem;
-      color: #0f0;
+      margin-top: 1.5rem;
       text-align: center;
+    }
+    #downloadLink a {
+      color: #0f0;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -109,4 +119,17 @@
         <option value="mp4">📹 合成影片（含封面）</option>
       </select>
 
-      <button typ
+      <button type="submit">開始混音</button>
+    </form>
+
+    <div id="statusText">混音合成中，需 1~2 分鐘內，請耐心等候。</div>
+    <div class="progress">
+      <div id="progressBar" class="progress-bar">0%</div>
+    </div>
+
+    <div id="downloadLink"><a href="#" target="_blank">⬇️ 點此下載你的作品</a></div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
