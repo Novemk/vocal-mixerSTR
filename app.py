@@ -66,7 +66,7 @@ def upload_file():
             img.save(final_cover_path)
 
             audioclip = AudioFileClip(audio_path)
-            audioclip = audioclip.subclip(0, min(10, audioclip.duration))  # 限制10秒
+            audioclip = audioclip.subclip(0, min(90, audioclip.duration))  # 限制最多 90 秒
             imageclip = ImageClip(final_cover_path).set_duration(audioclip.duration)
             videoclip = CompositeVideoClip([imageclip.set_audio(audioclip)])
             video_path = os.path.join(OUTPUT_FOLDER, f"{uid}.mp4")
