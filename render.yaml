@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: vocal-mixerSRT
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: python app.py
