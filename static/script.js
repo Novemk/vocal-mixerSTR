@@ -17,7 +17,7 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
 
   let percent = 0;
   const interval = setInterval(() => {
-    percent = Math.min(percent + Math.random() * 10, 90);
+    percent = Math.min(percent + Math.random() * 10, 95);
     bar.style.width = `${percent.toFixed(1)}%`;
   }, 500);
 
@@ -29,20 +29,31 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
 
     clearInterval(interval);
     bar.style.width = '100%';
-    statusText.textContent = '✅ 混音完成！準備下載…';
 
-    if (response.ok) {
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      downloadLink.href = url;
-      downloadLink.download = 'vocal_mix.mp4';
+    const data = await response.json();
+    if (data.video_url) {
+      statusText.textContent = '✅ 混音完成，點擊以下按鈕下載';
+      downloadLink.href = data.video_url;
+      downloadLink.download = "vocal_mix.mp4";
       result.classList.remove('hidden');
     } else {
-      throw new Error('伺服器錯誤，請稍後再試');
+      throw new Error(data.error || '合成失敗，請再試一次');
     }
   } catch (err) {
     clearInterval(interval);
     bar.style.width = '0%';
     statusText.textContent = `❌ 發生錯誤：${err.message}`;
+  }
+});
+
+// 顯示已選檔名
+const vocalInput = document.getElementById('vocal');
+vocalInput.addEventListener('change', (e) => {
+  const label = e.target.nextElementSibling;
+  const file = e.target.files[0];
+  if (file) {
+    label.textContent = `🎵 已選擇：${file.name}`;
+  } else {
+    label.textContent = '📤 請選擇您的清唱音檔';
   }
 });
