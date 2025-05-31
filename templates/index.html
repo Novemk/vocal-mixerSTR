@@ -1,135 +1,105 @@
+**🔧 完整更新版 HTML（templates/index.html）**
+
+```html
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cetro Vocal Mixer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background-color: #0a0a0a;
-      color: #fff;
-      font-family: 'Orbitron', sans-serif;
-      padding: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
-    .container {
-      background: linear-gradient(145deg, #1c1c1c, #000);
-      border: 3px solid #ffd700;
-      border-radius: 25px;
-      padding: 2rem;
-      max-width: 600px;
-      width: 100%;
-      box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
-      position: relative;
-    }
-    .logo {
-      display: block;
-      margin: 0 auto 1rem;
-      width: 100px;
-    }
-    h1 {
-      color: #ffd700;
-      text-align: center;
-      font-size: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-      margin-bottom: 0.5rem;
-    }
-    input, select {
-      width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border-radius: 10px;
-      border: none;
-      margin-bottom: 1rem;
-      background-color: #121212;
-      color: #fff;
-      border: 1px solid #444;
-    }
-    button {
-      width: 100%;
-      padding: 1rem;
-      font-size: 1.1rem;
-      border-radius: 12px;
-      border: none;
-      margin-top: 1rem;
-      background-color: #ffd700;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #ffcc00;
-    }
-    .progress {
-      height: 20px;
-      background: #222;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-top: 1rem;
-    }
-    .progress-bar {
-      background-color: #ffd700;
-      height: 100%;
-      width: 0%;
-      text-align: center;
-      line-height: 20px;
-      color: #000;
-      font-weight: bold;
-    }
-    #statusText {
-      text-align: center;
-      margin-bottom: 0.5rem;
-      color: #ccc;
-      display: none;
-    }
-    #downloadLink {
-      display: none;
-      margin-top: 1.5rem;
-      text-align: center;
-    }
-    #downloadLink a {
-      color: #0f0;
-      font-weight: bold;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
   <div class="container">
-    <img class="logo" src="https://github.com/Novemk/vocal-mixerSTR/blob/main/default_cover.png?raw=true" alt="CETRO Logo">
-    <h1>CETRO - 5.M.A [reimagined] challenge</h1>
+    <img src="https://github.com/Novemk/vocal-mixerSTR/blob/main/default_cover.png?raw=true" alt="Cetro Logo" class="logo" />
+
+    <h1>Cetro - 5.M.A [reimagined] Challenge</h1>
     <form id="uploadForm">
-      <label for="vocal">請上傳清唱音檔（MP3 或 WAV）</label>
-      <input type="file" id="vocal" name="vocal" accept=".mp3,.wav" required />
+      <label for="vocal">請上傳清唱音檔（mp3 或 wav）：</label>
+      <input type="file" id="vocal" name="vocal" accept="audio/*" required />
 
-      <label for="singer">輸入歌唱者名稱</label>
-      <input type="text" id="singer" name="singer" placeholder="例如：Cetro Fan #1" required />
+      <label for="singer">歌唱者名稱：</label>
+      <input type="text" id="singer" name="singer" placeholder="例如：Cetro粉絲-小艾" required />
 
-      <label for="format">選擇輸出格式</label>
-      <select id="format" name="output_format">
-        <option value="mp3">🎵 合成 MP3（較快完成）</option>
-        <option value="mp4">📹 合成影片（含封面）</option>
+      <label for="format">輸出格式：</label>
+      <select id="format" name="format">
+        <option value="mp3">MP3（較快完成）</option>
+        <option value="mp4">影片 MP4</option>
       </select>
 
       <button type="submit">開始混音</button>
     </form>
 
-    <div id="statusText">混音合成中，需 1~2 分鐘內，請耐心等候。</div>
-    <div class="progress">
-      <div id="progressBar" class="progress-bar">0%</div>
+    <div id="progressContainer" class="hidden">
+      <p>混音合成中，需 1~2 分鐘內，請耐心等候。</p>
+      <div class="progress-bar">
+        <div id="progressBarFill">0%</div>
+      </div>
+      <p id="elapsedTime">已經處理時間：0 秒</p>
     </div>
 
-    <div id="downloadLink"><a href="#" target="_blank">⬇️ 點此下載你的作品</a></div>
+    <div id="result" class="hidden">
+      <a id="downloadLink" href="#" download>下載合成檔案</a>
+    </div>
   </div>
 
   <script src="/static/script.js"></script>
 </body>
 </html>
+```
+
+
+**📜 script.js 完整更新版（static/script.js）**
+
+```javascript
+document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const formData = new FormData(form);
+  const progress = document.getElementById("progressContainer");
+  const result = document.getElementById("result");
+  const progressBarFill = document.getElementById("progressBarFill");
+  const elapsed = document.getElementById("elapsedTime");
+
+  progress.classList.remove("hidden");
+  result.classList.add("hidden");
+  progressBarFill.style.width = "0%";
+  progressBarFill.innerText = "0%";
+  elapsed.innerText = "已經處理時間：0 秒";
+
+  let percent = 0;
+  let time = 0;
+  const timer = setInterval(() => {
+    time++;
+    elapsed.innerText = `已經處理時間：${time} 秒`;
+    if (percent < 95) {
+      percent += 1;
+      progressBarFill.style.width = percent + "%";
+      progressBarFill.innerText = percent + "%";
+    }
+  }, 1000);
+
+  const response = await fetch("/upload?format=" + form.format.value, {
+    method: "POST",
+    body: formData,
+  });
+
+  clearInterval(timer);
+  progressBarFill.style.width = "100%";
+  progressBarFill.innerText = "100%";
+
+  const data = await response.json();
+  if (data.video_url || data.audio_url) {
+    const url = data.video_url || data.audio_url;
+    document.getElementById("downloadLink").href = url;
+    result.classList.remove("hidden");
+  } else {
+    alert("發生錯誤：" + (data.error || "未知錯誤"));
+  }
+});
+```
+
+您可以將 HTML 放進 `templates/index.html`，JS 放進 `static/script.js`。
+
+若需要對應的 `style.css` 或希望再優化視覺，也可以交給我處理 ❤️
