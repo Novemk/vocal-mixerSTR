@@ -1,35 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CETRO Vocal Mixer</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>清唱混音器</title>
+  <style>
+    body {
+      background-color: #101010;
+      color: #fff;
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 720px;
+      margin: auto;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: none;
+    }
+    #progress-bar {
+      width: 0%;
+      background-color: #ffc107;
+      color: black;
+      text-align: center;
+      padding: 4px 0;
+      border-radius: 5px;
+    }
+    #progress-container {
+      background-color: #eee;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    label {
+      margin-top: 15px;
+      display: block;
+      font-weight: bold;
+    }
+    #status {
+      margin-bottom: 5px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <img src="https://github.com/Novemk/vocal-mixerSTR/blob/main/default_cover.png?raw=true" class="logo" />
-    <h1>CETRO - 5.M.A [reimagined] challenge</h1>
+  <h1>🎤 清唱混音器</h1>
 
-    <form id="uploadForm">
-      <label class="upload-area">
-        <input type="file" id="vocal" name="vocal" accept=".mp3,.wav" required />
-        <span>📤 請選擇您的清唱音檔</span>
-      </label>
-      <input type="text" id="singer" name="singer" placeholder="請輸入歌唱者名稱（將顯示在影片封面）" required />
-      <button type="submit">開始混音</button>
-    </form>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <label for="vocal">請上傳清唱音檔（MP3 或 WAV）</label>
+    <input type="file" name="vocal" id="vocal" required>
 
-    <div id="progress" class="progress hidden">
-      <div class="bar"></div>
-      <p id="statusText">正在處理中…</p>
-    </div>
+    <label for="singer">請輸入歌唱者名稱</label>
+    <input type="text" name="singer" id="singer" placeholder="例如：Cetro - 5.M.A" required>
 
-    <div id="result" class="hidden">
-      <p>✅ 合成完成！</p>
-      <a id="downloadLink" href="#" target="_blank">下載您的影片</a>
+    <label for="output_format">選擇輸出格式</label>
+    <select name="output_format" id="output_format" required>
+      <option value="mp3">🎵 合成 MP3（較快完成）</option>
+      <option value="mp4">📹 合成影片（含封面）</option>
+    </select>
+
+    <button type="submit">開始混音</button>
+  </form>
+
+  <div id="progress" style="display: none; margin-top: 20px;">
+    <div id="status">混音合成中，需 1~2 分鐘內，請耐心等候。</div>
+    <div id="progress-container">
+      <div id="progress-bar">0%</div>
     </div>
   </div>
+
+  <div id="result" style="margin-top: 20px;"></div>
+  <a id="download" href="#" style="display: none; color: #ffc107;">⬇️ 下載檔案</a>
 
   <script src="/static/script.js"></script>
 </body>
