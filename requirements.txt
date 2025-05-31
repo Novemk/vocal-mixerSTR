@@ -2,3 +2,5 @@ Flask
 pydub
 requests
 moviepy
+imageio
+imageio-ffmpeg
