@@ -14,7 +14,6 @@ OUTPUT_FOLDER = 'outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# 外部封面圖連結（可更換）
 DEFAULT_COVER_URL = "https://github.com/Novemk/vocal-mixerSTR/blob/main/default_cover.png?raw=true"
 
 @app.route('/')
@@ -26,6 +25,7 @@ def upload_file():
     try:
         file = request.files['vocal']
         singer = request.form.get('singer', 'Unknown Artist')
+        output_format = request.args.get('format', 'mp3')
 
         if file:
             ext = file.filename.split('.')[-1].lower()
@@ -46,6 +46,12 @@ def upload_file():
             mixed = background - 6
             mixed = mixed.overlay(vocal + 3)
 
+            if output_format == 'mp3':
+                audio_path = os.path.join(OUTPUT_FOLDER, f"{uid}.mp3")
+                mixed.export(audio_path, format='mp3')
+                return jsonify({'audio_url': f"/download/{uid}.mp3"})
+
+            # 影片合成部分
             audio_path = os.path.join(OUTPUT_FOLDER, f"{uid}_audio.mp3")
             mixed.export(audio_path, format='mp3')
 
@@ -59,32 +65,16 @@ def upload_file():
                 font = ImageFont.load_default()
             bbox = draw.textbbox((0, 0), singer, font=font)
             w = bbox[2] - bbox[0]
-            h = bbox[3] - bbox[1]
             draw.rectangle([(0, 660), (720, 720)], fill="black")
             draw.text(((720 - w) / 2, 675), singer, font=font, fill="white")
-            final_cover_path = os.path.join(OUTPUT_FOLDER, f"{uid}_finalcover.jpg")
+            final_cover_path = os.path.join(OUTPUT_FOLDER, f"{uid}_cover.jpg")
             img.save(final_cover_path)
 
-            audioclip = AudioFileClip(audio_path)
-            audioclip = audioclip.subclip(0, min(90, audioclip.duration))  # 限制最多 90 秒
+            audioclip = AudioFileClip(audio_path).subclip(0, min(90, AudioFileClip(audio_path).duration))
             imageclip = ImageClip(final_cover_path).set_duration(audioclip.duration)
             videoclip = CompositeVideoClip([imageclip.set_audio(audioclip)])
             video_path = os.path.join(OUTPUT_FOLDER, f"{uid}.mp4")
-            videoclip.write_videofile(
-                video_path,
-                codec='libx264',
-                fps=6,
-                preset='ultrafast',
-                bitrate='512k',
-                audio_codec='aac',
-                threads=2,
-                verbose=False,
-                logger=None
-            )
-
-            videoclip.close()
-            audioclip.close()
-            imageclip.close()
+            videoclip.write_videofile(video_path, codec='libx264', fps=10, preset='ultrafast', verbose=False, logger=None)
 
             return jsonify({ 'video_url': f"/download/{uid}.mp4" })
 
