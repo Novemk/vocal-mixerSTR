@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CETRO Vocal Mixer</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <img src="https://github.com/Novemk/vocal-mixerSTR/blob/main/default_cover.png?raw=true" class="logo" />
+    <h1>CETRO - 5.M.A [reimagined] challenge</h1>
+
+    <form id="uploadForm">
+      <label class="upload-area">
+        <input type="file" id="vocal" name="vocal" accept=".mp3,.wav" required />
+        <span>📤 請選擇您的清唱音檔</span>
+      </label>
+      <input type="text" id="singer" name="singer" placeholder="請輸入歌唱者名稱（將顯示在影片封面）" required />
+      <button type="submit">開始混音</button>
+    </form>
+
+    <div id="progress" class="progress hidden">
+      <div class="bar"></div>
+      <p id="statusText">正在處理中…</p>
+    </div>
+
+    <div id="result" class="hidden">
+      <p>✅ 合成完成！</p>
+      <a id="downloadLink" href="#" target="_blank">下載您的影片</a>
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
