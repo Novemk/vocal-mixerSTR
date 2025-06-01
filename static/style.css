@@ -1,131 +1,114 @@
-/* 通用設定 */
 body {
-  font-family: 'Helvetica Neue', sans-serif;
-  background: linear-gradient(to bottom, #f0f0f0, #dcdcdc);
-  color: #111;
-  text-align: center;
-  padding: 40px 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #1a1a1a;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
 
 .container {
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 24px;
-  background: #fff;
-  border: 3px solid #000;
-  border-radius: 16px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+  width: 400px;
+  background: #2a2a2a;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  text-align: center;
 }
 
-h1 {
-  font-size: 18px;
-  letter-spacing: 1px;
-  margin-bottom: 4px;
+.upload-box {
+  margin-bottom: 1rem;
 }
 
-h2 {
-  font-size: 28px;
-  font-weight: 800;
-  margin-bottom: 24px;
-  letter-spacing: 4px;
-}
-
-p {
-  font-size: 14px;
-  margin: 8px 0;
-}
-
-/* 上傳與合成按鈕 */
-button {
-  background-color: #111;
-  color: white;
+#uploadBtn {
+  padding: 0.5rem 1rem;
+  background: #444;
+  color: #fff;
   border: none;
-  padding: 10px 24px;
-  margin: 12px 6px;
-  font-size: 16px;
+  border-radius: 6px;
   cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.2s ease;
 }
 
-button:hover {
-  background-color: #333;
+#uploadBtn:hover {
+  background: #666;
 }
 
-/* 格式選擇區塊 */
-.format-options {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 12px;
+#fileName {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.format-select {
+  margin: 1rem 0;
 }
 
 .format-btn {
-  background-color: #000;
-  color: white;
-  border: 2px solid transparent;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 0.4rem 1rem;
+  margin: 0 0.5rem;
+  border: 2px solid #fff;
+  background: transparent;
+  color: #fff;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.format-btn:hover {
-  background-color: #222;
+  transition: all 0.3s ease;
 }
 
 .format-btn.selected {
-  border: 2px solid #ffd700;
-  color: #ffd700;
-  font-weight: bold;
+  border-color: #f5c000;
+  color: #f5c000;
 }
 
-/* 進度條區域 */
-.progress-bar-wrapper {
+.progress-box {
+  margin-top: 1rem;
+  text-align: left;
+}
+
+#progressBar {
   width: 100%;
-  background-color: #ccc;
-  border-radius: 8px;
   height: 16px;
-  margin: 12px 0;
+  background: #444;
+  border-radius: 8px;
   overflow: hidden;
 }
 
-.progress-bar {
+#progressFill {
   height: 100%;
+  background: #f5c000;
   width: 0%;
-  background-color: #ffd700;
-  transition: width 0.5s ease;
+  transition: width 0.4s ease;
 }
 
-/* 狀態訊息 */
-.status-msg {
-  font-size: 13px;
-  color: #339;
-  display: none;
+#progressText,
+#elapsedTime {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
 }
 
-/* 檔名顯示 */
-#fileNameDisplay {
-  font-size: 13px;
-  color: #666;
-  margin-top: -6px;
-  margin-bottom: 12px;
-}
-
-/* 下載連結 */
-.download-link {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #000;
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
+#startBtn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #f5c000;
+  border: none;
+  color: #000;
   border-radius: 8px;
-  transition: background-color 0.3s ease;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-.download-link:hover {
-  background-color: #333;
+#downloadLink {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #f5c000;
+  text-decoration: underline;
+  font-size: 0.95rem;
+}
+
+.error {
+  color: #ff6b6b;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
 }
