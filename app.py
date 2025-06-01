@@ -50,7 +50,7 @@ def upload():
         bgm = AudioSegment.from_file("bgm.mp3")
 
         # 限制長度為 90 秒
-        max_duration_ms = 90 * 1000
+        max_duration_ms = 120 * 1000
         vocal = vocal[:max_duration_ms]
         bgm = bgm[:max_duration_ms]
 
@@ -60,11 +60,11 @@ def upload():
         combined.export(temp_audio, format="mp3")
 
         # 封面圖 + 音訊生成影片
-        cover = ImageClip("default_cover.png", duration=90)
+        cover = ImageClip("default_cover.png", duration=120)
         cover = cover.resize(width=512)  # ✅ 降畫質
 
         cover = cover.set_audio(AudioFileClip(temp_audio))
-        cover = cover.set_duration(90)
+        cover = cover.set_duration(120)
         cover = cover.set_fps(1)
 
         print("🎞️ 開始輸出影片檔案：", output_path)
