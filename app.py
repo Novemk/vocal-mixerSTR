@@ -1,4 +1,5 @@
 import os
+import time
 import requests
 from flask import Flask, render_template, request, send_file, jsonify
 from werkzeug.utils import secure_filename
@@ -7,7 +8,7 @@ from pydub import AudioSegment
 
 app = Flask(__name__)
 
-# ✅ 自動下載 bgm.mp3
+# ✅ 自動下載 BGM
 def download_bgm_if_needed():
     bgm_path = "bgm.mp3"
     if not os.path.exists(bgm_path):
@@ -17,7 +18,7 @@ def download_bgm_if_needed():
         r.raise_for_status()
         with open(bgm_path, 'wb') as f:
             f.write(r.content)
-        print("✅ 下載完成")
+        print("✅ BGM 下載完成")
 
 @app.route('/')
 def index():
@@ -33,27 +34,29 @@ def upload():
     if not file or output_type not in ['MP3', 'MP4']:
         return jsonify({'status': 'error', 'message': '無效的輸入資料'}), 400
 
-    # 📥 儲存清唱音檔
-    filename = secure_filename(file.filename)
-    filepath = filename
-    file.save(filepath)
+    # 儲存上傳檔案
+    timestamp = int(time.time())
+    input_filename = f"input_{timestamp}.mp3"
+    file.save(input_filename)
 
-    # 📤 合成輸出
-    output_filename = f"output.{output_type.lower()}"
+    # 輸出檔案命名
+    output_filename = f"output_{timestamp}.{output_type.lower()}"
     output_path = output_filename
 
     if output_type == "MP4":
-        vocal = AudioSegment.from_file(filepath)
+        # 處理音訊
+        vocal = AudioSegment.from_file(input_filename)
         bgm = AudioSegment.from_file("bgm.mp3")
 
         max_duration_ms = 90 * 1000
         vocal = vocal[:max_duration_ms]
         bgm = bgm[:max_duration_ms]
-        combined = bgm.overlay(vocal)
 
-        temp_audio = "temp_audio.mp3"
+        combined = bgm.overlay(vocal)
+        temp_audio = f"temp_{timestamp}.mp3"
         combined.export(temp_audio, format="mp3")
 
+        # 合成影片
         cover = ImageClip("default_cover.png", duration=90)
         cover = cover.set_audio(AudioFileClip(temp_audio))
         cover = cover.set_duration(90)
@@ -67,11 +70,20 @@ def upload():
             preset="ultrafast"
         )
 
-    else:  # MP3 合成
-        vocal = AudioSegment.from_file(filepath)
+        # 清除暫存音訊檔
+        if os.path.exists(temp_audio):
+            os.remove(temp_audio)
+
+    else:
+        # MP3 輸出
+        vocal = AudioSegment.from_file(input_filename)
         bgm = AudioSegment.from_file("bgm.mp3")
         combined = bgm.overlay(vocal)
         combined.export(output_path, format="mp3")
+
+    # 可選：清除上傳音訊
+    if os.path.exists(input_filename):
+        os.remove(input_filename)
 
     return jsonify({'status': 'done', 'file': output_filename})
 
