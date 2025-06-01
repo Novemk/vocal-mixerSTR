@@ -108,6 +108,9 @@ def download():
         return send_file(progress["filename"], as_attachment=True)
     return "尚未完成", 400
 
+import os
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # 讀取 Render 提供的 PORT
+    app.run(host="0.0.0.0", port=port)
+
