@@ -30,6 +30,8 @@ def upload():
     download_bgm_if_needed()
 
     file = request.files.get('file')
+    delay_seconds = float(request.form.get('delay', 0))
+    delay_ms = int(delay_seconds * 1000)
     output_type = request.form.get('output_type')
 
     if not file or output_type not in ['MP3', 'MP4']:
@@ -45,11 +47,13 @@ def upload():
     output_path = output_filename
 
     if output_type == "MP4":
-        # 載入音訊
         vocal = AudioSegment.from_file(input_filename)
         bgm = AudioSegment.from_file("bgm.mp3")
 
-        # 限制長度為 90 秒
+        if delay_ms > 0:
+            vocal = AudioSegment.silent(duration=delay_ms) + vocal
+
+        # 限制長度為 120 秒
         max_duration_ms = 120 * 1000
         vocal = vocal[:max_duration_ms]
         bgm = bgm[:max_duration_ms]
@@ -61,8 +65,7 @@ def upload():
 
         # 封面圖 + 音訊生成影片
         cover = ImageClip("default_cover.png", duration=120)
-        cover = cover.resize(width=512)  # ✅ 降畫質
-
+        cover = cover.resize(width=512)
         cover = cover.set_audio(AudioFileClip(temp_audio))
         cover = cover.set_duration(120)
         cover = cover.set_fps(1)
@@ -82,6 +85,7 @@ def upload():
 
         if os.path.exists(temp_audio):
             os.remove(temp_audio)
+
 
     else:
         # MP3 輸出
