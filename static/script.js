@@ -10,6 +10,7 @@ const statusText = document.getElementById('status');
 const progressBar = document.getElementById('progress');
 const timerText = document.getElementById('timer');
 const downloadSection = document.getElementById('downloadSection');
+const delayInput = document.getElementById('delayInput');
 
 mp3Btn.onclick = () => {
     outputType = 'MP3';
@@ -32,6 +33,7 @@ startBtn.onclick = () => {
     const formData = new FormData();
     formData.append('file', fileInput.files[0]);
     formData.append('output_type', outputType);
+    formData.append('delay', delayInput.value);
 
     statusText.textContent = '混音合成中，需 1~2 分鐘內，請耐心等候。';
     statusText.style.cursor = 'default';
