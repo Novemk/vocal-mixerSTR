@@ -1,5 +1,6 @@
 import os
 import time
+import requests
 from flask import Flask, render_template, request, send_file, jsonify
 from werkzeug.utils import secure_filename
 from moviepy.editor import *
@@ -11,12 +12,29 @@ OUTPUT_FOLDER = 'outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
+# ✅ 自動下載 bgm.mp3（來自 GitHub raw 連結）
+def download_bgm_if_needed():
+    bgm_path = "bgm.mp3"
+    if not os.path.exists(bgm_path):
+        print("🔄 自動下載 BGM 中...")
+        url = "https://raw.githubusercontent.com/Novemk/vocal-mixerSTR/main/bgm.mp3"
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            with open(bgm_path, 'wb') as f:
+                f.write(response.content)
+            print("✅ BGM 下載完成")
+        except Exception as e:
+            print("❌ 無法下載 BGM：", e)
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
+    download_bgm_if_needed()  # 🔁 確保背景音樂已下載
+
     file = request.files.get('file')
     output_type = request.form.get('output_type')
 
@@ -56,11 +74,10 @@ def upload():
             output_path,
             codec="libx264",
             audio_codec="aac",
-            bitrate="800k",  # 控制影片壓縮比
+            bitrate="800k",
             threads=1,
             preset="ultrafast"
         )
-
 
     else:  # MP3
         vocal = AudioSegment.from_file(filepath)
