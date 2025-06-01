@@ -1,51 +1,43 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CETRO - Vocal Mixer</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>清唱混音產生器</title>
+  <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
-    <div class="container">
-        <div class="frame">
-            <div class="title-box">
-                <img src="/static/logo.png" alt="Cetro Logo" class="logo">
-                <h1>CETRO - 5.M.A [reimagined] Challenge</h1>
-            </div>
+  <div class="container">
+    <h1>🎵 清唱混音產生器</h1>
 
-            <div class="form-section">
-                <label for="vocal" class="label-title">請上傳清唱音檔 (MP3 或 WAV)</label>
-                <div class="file-upload">
-                    <label for="vocal" class="file-label" id="fileLabel">上傳檔案：檔名</label>
-                    <input type="file" id="vocal" name="vocal" accept="audio/mp3,audio/wav">
-                </div>
+    <label class="upload-btn">
+      <input type="file" id="vocal" accept=".mp3, .wav" hidden />
+      <span id="upload-label">選擇清唱檔案</span>
+    </label>
 
-                <label for="singer" class="label-title">請輸入歌唱者名稱</label>
-                <input type="text" id="singer" name="singer" placeholder="例如：Cetro - 5.M.A">
+    <div class="file-name" id="file-name"></div>
 
-                <label class="label-title">選擇輸出格式</label>
-                <div class="output-options">
-                    <button class="format-btn active" id="formatMp3">MP3<br><span>（較快完成）</span></button>
-                    <button class="format-btn" id="formatMp4">MP4<br><span>（1:1 影片）</span></button>
-                </div>
+    <input type="text" id="singer" placeholder="輸入歌唱者名稱"/>
 
-                <button id="startBtn" class="start-btn">開始合成</button>
-                <p class="hint" id="hintText">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
-
-                <div class="progress-bar">
-                    <div id="progressFill" class="fill" style="width: 0%"></div>
-                </div>
-                <p class="progress-text" id="progressText">0%</p>
-                <p class="time-counter" id="timeCounter">已經處理時間：0 秒</p>
-                <a id="downloadLink" href="#" class="download-link" style="display: none;">下載合成檔案</a>
-            </div>
-        </div>
+    <div class="format-select">
+      <button class="format-btn selected" data-format="mp3">合成 MP3（較快完成）</button>
+      <button class="format-btn" data-format="mp4">合成影片 MP4</button>
     </div>
 
-    <script src="/static/script.js"></script>
+    <button id="start-btn">開始混音</button>
+
+    <div id="status-text" class="hidden">混音合成中，需 1~2 分鐘內，請耐心等候。</div>
+
+    <div class="progress-container hidden">
+      <div class="progress-bar" id="progress-bar"></div>
+      <div class="progress-percent" id="progress-percent">0%</div>
+    </div>
+
+    <div class="elapsed-time hidden">已處理時間：<span id="time">0</span> 秒</div>
+
+    <a id="download-link" class="hidden" download>⬇ 下載合成檔案</a>
+  </div>
+
+  <script src="/static/script.js"></script>
 </body>
 </html>
