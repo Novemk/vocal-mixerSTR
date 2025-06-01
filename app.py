@@ -33,20 +33,34 @@ def upload():
     output_path = os.path.join(OUTPUT_FOLDER, output_filename)
 
     if output_type == "MP4":
+        # 載入音訊
         vocal = AudioSegment.from_file(filepath)
         bgm = AudioSegment.from_file("bgm.mp3")
 
-        # 混音處理（可調整音量）
+        # 限制長度：最多 90 秒（毫秒）
+        max_duration_ms = 90 * 1000
+        vocal = vocal[:max_duration_ms]
+        bgm = bgm[:max_duration_ms]
+
+        # 混音合成
         combined = bgm.overlay(vocal)
         temp_audio = os.path.join(OUTPUT_FOLDER, "temp_audio.mp3")
         combined.export(temp_audio, format="mp3")
 
-        # 加上圖片轉成影片
-        cover = ImageClip("default_cover.png", duration=combined.duration_seconds)
+        # 建立影片（固定長度）
+        cover = ImageClip("default_cover.png", duration=90)
         cover = cover.set_audio(AudioFileClip(temp_audio))
-        cover = cover.set_duration(combined.duration_seconds)
-        cover = cover.set_fps(1)
-        cover.write_videofile(output_path, codec="libx264", audio_codec="aac")
+        cover = cover.set_duration(90)
+        cover = cover.set_fps(1)  # 低 FPS 以降低容量
+        cover.write_videofile(
+            output_path,
+            codec="libx264",
+            audio_codec="aac",
+            bitrate="800k",  # 控制影片壓縮比
+            threads=1,
+            preset="ultrafast"
+        )
+
 
     else:  # MP3
         vocal = AudioSegment.from_file(filepath)
