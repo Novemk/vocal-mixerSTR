@@ -1,4 +1,4 @@
-/* 🌐 整體頁面樣式設定 */
+/* 全域樣式設定 */
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 0;
@@ -10,10 +10,10 @@ body {
   height: 100vh;
 }
 
-/* 📦 中央內容容器樣式（含背景圖） */
+/* 外框容器，內含背景圖與元件配置 */
 .container {
-  width: 600px;
-  height: 723px;
+  width: 500px;
+  height: 603px;
   padding: 20px;
   box-sizing: border-box;
   background-image: url('/static/cover.png');
@@ -28,62 +28,76 @@ body {
   align-items: center;
 }
 
-/* 🔠 主標題樣式 */
+/* 標題樣式 */
 h1 {
   text-align: center;
-  color: #333;
+  color: #111;
 }
 
-/* 🟡 通用按鈕樣式（黃底黑字 + 黑框） */
+h2 {
+  text-align: center;
+  color: #222;
+}
+
+/* 通用按鈕樣式 */
 button {
   margin: 5px;
   padding: 10px 20px;
   font-size: 16px;
-  border: 2px solid #000;
+  border: none;
   border-radius: 6px;
   cursor: pointer;
-  background-color: #FFD700; /* 黃色背景 */
-  color: #000; /* 黑色文字 */
+  background-color: #222;     /* 黑底 */
+  color: #ffcc00;             /* 黃字 */
+  font-weight: bold;
 }
 
-/* ⚫ 已選中按鈕樣式（黑底黃字 + 黃框） */
+/* 被選取的按鈕 */
 button.active {
-  background-color: #000;      /* 黑色背景 */
-  color: #FFD700;              /* 黃色文字 */
-  border: 2px solid #FFD700;   /* 黃色框線 */
+  background-color: #ffcc00;  /* 黃底 */
+  color: #000;                /* 黑字 */
 }
 
-/* 🖱️ 滑過按鈕時稍微變淡 */
+/* 滑鼠懸停效果 */
 button:hover {
   opacity: 0.9;
 }
 
-/* 📊 進度條樣式 */
+/* 📦 進度條容器 */
+.progress-bar {
+  width: 100%;
+  max-width: 500px;
+  height: 10px;
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+/* 📈 進度條本體 */
 #progress {
   height: 10px;
   width: 0%;
-  background-color: #2196F3; /* 藍色進度條 */
-  margin-top: 10px;
+  background-color: #ffcc00;
   transition: width 0.3s;
 }
 
-/* 📁 合成後下載區塊間距 */
+/* 下載區塊樣式 */
 #downloadSection {
   margin-top: 20px;
 }
 
-/* ⬇️ 合成完成後的下載按鈕樣式 */
+/* ✅ 合成完成提示按鈕 */
 .download-btn {
   display: inline-block;
   padding: 10px 16px;
-  background-color: #673AB7;  /* 紫色按鈕 */
-  color: white;
+  background-color: #000;
+  color: #ffcc00;
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
 }
 
-/* 🖱️ 滑過下載按鈕時的顏色變化 */
 .download-btn:hover {
-  background-color: #5E35B1;
+  background-color: #333;
 }
