@@ -1,11 +1,11 @@
 import os
 import uuid
+import time
+import threading
 from flask import Flask, render_template, request, send_file, jsonify
 from werkzeug.utils import secure_filename
 from pydub import AudioSegment
 from moviepy.editor import AudioFileClip, ImageClip
-import threading
-import time
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "static/uploads"
@@ -17,12 +17,11 @@ app.config["OUTPUT_FOLDER"] = OUTPUT_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# 全域暫存進度狀態
 progress = {
     "status": "idle",
     "percent": 0,
     "seconds": 0,
-    "filename": None,
+    "filename": None
 }
 
 
@@ -43,28 +42,48 @@ def synthesize_audio(filepath, output_format):
     output_filename = f"{filename}_{uid}.{output_format.lower()}"
     output_path = os.path.join(app.config["OUTPUT_FOLDER"], output_filename)
 
-    for i in range(5):  # 模擬進度用
-        time.sleep(0.5)
-        progress["seconds"] += 0.5
-        progress["percent"] += 10
+    try:
+        for _ in range(5):  # 模擬前期處理進度
+            time.sleep(0.5)
+            progress["seconds"] += 0.5
+            progress["percent"] += 10
 
-    if output_format == "MP3":
-        sound = AudioSegment.from_file(filepath)
-        sound.export(output_path, format="mp3")
-        progress["percent"] = 100
-        progress["filename"] = output_path
+        if output_format == "MP3":
+            sound = AudioSegment.from_file(filepath)
+            sound.export(output_path, format="mp3")
+            progress["percent"] = 100
+            progress["filename"] = output_path
 
-    elif output_format == "MP4":
-        audio = AudioFileClip(filepath)
-        image = ImageClip(COVER_IMAGE).set_duration(audio.duration).set_audio(audio).resize((720, 720))
-        image.write_videofile(output_path, fps=24, codec="libx264", audio_codec="aac")
-        progress["percent"] = 100
-        progress["filename"] = output_path
+        elif output_format == "MP4":
+            audio = AudioFileClip(filepath)
+            if audio.duration > 180:  # 限制 3 分鐘
+                progress["status"] = "error"
+                progress["filename"] = None
+                return
 
-    progress["status"] = "done"
+            image = ImageClip(COVER_IMAGE).set_duration(audio.duration).set_audio(audio).resize((720, 720))
+            image.write_videofile(
+                output_path,
+                fps=24,
+                codec="libx264",
+                audio_codec="aac",
+                bitrate="800k",
+                threads=2,
+                preset="ultrafast",
+                logger=None
+            )
+            progress["percent"] = 100
+            progress["filename"] = output_path
+
+        progress["status"] = "done"
+
+    except Exception as e:
+        progress["status"] = "error"
+        progress["filename"] = None
+        print(f"[合成錯誤] {e}")
 
 
-@app.route("/", methods=["GET"])
+@app.route("/")
 def index():
     return render_template("index.html")
 
@@ -72,7 +91,7 @@ def index():
 @app.route("/upload", methods=["POST"])
 def upload():
     reset_progress()
-    file = request.files["file"]
+    file = request.files.get("file")
     if file:
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
@@ -90,8 +109,8 @@ def synthesize():
     if not filepath or not output_format:
         return jsonify({"success": False, "message": "缺少參數"})
 
-    # 開啟後台執行緒處理混音
     thread = threading.Thread(target=synthesize_audio, args=(filepath, output_format))
+    thread.daemon = True
     thread.start()
 
     return jsonify({"success": True})
@@ -108,9 +127,7 @@ def download():
         return send_file(progress["filename"], as_attachment=True)
     return "尚未完成", 400
 
-import os
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # 讀取 Render 提供的 PORT
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
