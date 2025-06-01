@@ -1,82 +1,100 @@
-// script.js
-
-const uploadInput = document.getElementById("vocal");
-const fileLabel = document.getElementById("file-label");
-const singerInput = document.getElementById("singer");
-const outputButtons = document.querySelectorAll(".output-btn");
-const startButton = document.getElementById("start-btn");
+const vocalInput = document.getElementById("vocal");
+const fileNameDisplay = document.getElementById("file-name");
+const formatButtons = document.querySelectorAll(".format-btn");
+const startBtn = document.getElementById("start-btn");
+const statusText = document.getElementById("status-text");
 const progressBar = document.getElementById("progress-bar");
-const progressText = document.getElementById("progress-text");
-const progressSection = document.getElementById("progress-section");
-const elapsedTime = document.getElementById("elapsed-time");
-const tipText = document.getElementById("tip-text");
+const progressPercent = document.getElementById("progress-percent");
+const progressContainer = document.querySelector(".progress-container");
+const elapsedTime = document.querySelector(".elapsed-time");
+const elapsedTimeSpan = document.getElementById("time");
 const downloadLink = document.getElementById("download-link");
+let selectedFormat = "mp3";
 
-let selectedOutput = "mp3";
-let startTime = null;
-
-uploadInput.addEventListener("change", () => {
-    const file = uploadInput.files[0];
-    if (file) {
-        fileLabel.textContent = `${file.name}`;
-    }
+// 檔案顯示
+vocalInput.addEventListener("change", () => {
+  const file = vocalInput.files[0];
+  if (file) {
+    fileNameDisplay.textContent = `上傳檔案：${file.name}`;
+  }
 });
 
-outputButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-        outputButtons.forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedOutput = btn.getAttribute("data-output");
+// 選擇格式
+formatButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    formatButtons.forEach((b) => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    selectedFormat = btn.dataset.format;
+  });
+});
+
+// 開始合成
+startBtn.addEventListener("click", () => {
+  const file = vocalInput.files[0];
+  const singer = document.getElementById("singer").value;
+
+  if (!file || !singer) {
+    alert("請選擇檔案並輸入歌唱者名稱");
+    return;
+  }
+
+  // 鎖定
+  startBtn.disabled = true;
+  vocalInput.disabled = true;
+  formatButtons.forEach((btn) => (btn.disabled = true));
+
+  statusText.classList.remove("hidden");
+  progressContainer.classList.remove("hidden");
+  elapsedTime.classList.remove("hidden");
+  downloadLink.classList.add("hidden");
+
+  // 時間
+  let seconds = 0;
+  const timer = setInterval(() => {
+    seconds++;
+    elapsedTimeSpan.textContent = seconds;
+  }, 1000);
+
+  // 模擬進度條
+  let progress = 0;
+  const progressTimer = setInterval(() => {
+    if (progress < 95) {
+      progress += Math.random() * 3;
+      progressBar.style.width = `${progress}%`;
+      progressPercent.textContent = `${Math.floor(progress)}%`;
+    }
+  }, 500);
+
+  // 上傳資料
+  const formData = new FormData();
+  formData.append("vocal", file);
+  formData.append("singer", singer);
+  formData.append("format", selectedFormat);
+
+  fetch("/upload", {
+    method: "POST",
+    body: formData,
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      clearInterval(timer);
+      clearInterval(progressTimer);
+      progressBar.style.width = `100%`;
+      progressPercent.textContent = `100%`;
+
+      if (data.video_url) {
+        downloadLink.href = data.video_url;
+        downloadLink.classList.remove("hidden");
+      } else if (data.audio_url) {
+        downloadLink.href = data.audio_url;
+        downloadLink.classList.remove("hidden");
+      } else {
+        alert("合成失敗！");
+      }
+    })
+    .catch((err) => {
+      clearInterval(timer);
+      clearInterval(progressTimer);
+      alert("合成錯誤：" + err.message);
     });
 });
-
-startButton.addEventListener("click", async () => {
-    const file = uploadInput.files[0];
-    if (!file) return alert("請選擇一個清唱音檔");
-
-    startButton.disabled = true;
-    uploadInput.disabled = true;
-    singerInput.disabled = true;
-    outputButtons.forEach(b => b.disabled = true);
-
-    progressBar.style.width = "0%";
-    progressText.textContent = "0%";
-    tipText.style.display = "block";
-    progressSection.style.display = "block";
-    downloadLink.style.display = "none";
-    startTime = Date.now();
-    updateElapsedTime();
-    const timerInterval = setInterval(updateElapsedTime, 1000);
-
-    const formData = new FormData();
-    formData.append("vocal", file);
-    formData.append("singer", singerInput.value);
-    formData.append("output", selectedOutput);
-
-    const response = await fetch("/upload", {
-        method: "POST",
-        body: formData
-    });
-
-    clearInterval(timerInterval);
-    if (!response.ok) {
-        alert("合成失敗，請稍後再試");
-        location.reload();
-        return;
-    }
-
-    const result = await response.json();
-    progressBar.style.width = "100%";
-    progressText.textContent = "100%";
-    downloadLink.href = result.video_url;
-    downloadLink.style.display = "inline-block";
-});
-
-function updateElapsedTime() {
-    const seconds = Math.floor((Date.now() - startTime) / 1000);
-    elapsedTime.textContent = `${seconds} 秒`;
-
-    const percentage = Math.min(100, Math.floor((seconds / 90) * 100));
-    progressBar.style.width = `${percentage}%`;
-    progressText.textContent = `${percentage}%`;
-}
