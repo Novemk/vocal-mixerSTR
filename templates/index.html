@@ -1,48 +1,168 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cetro - 5.M.A Challenge</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <title>清唱混音合成器</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0f0f0f;
+      color: #fff;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: #1a1a1a;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(255, 230, 0, 0.2);
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: #ffe600;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    .file-label {
+      background-color: #262626;
+      border: 2px solid #444;
+      border-radius: 12px;
+      padding: 0.8rem;
+      display: block;
+      cursor: pointer;
+      color: #ccc;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      transition: border 0.2s, color 0.2s;
+    }
+    .file-label:hover {
+      border-color: #ffe600;
+      color: #ffe600;
+    }
+    .file-name {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #aaa;
+    }
+    .format-select {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+    .format-btn {
+      flex: 1;
+      margin: 0.3rem;
+      padding: 0.6rem 1rem;
+      background-color: #262626;
+      border: 2px solid #444;
+      color: #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .format-btn.selected, .format-btn:hover {
+      border-color: #ffe600;
+      color: #ffe600;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border-radius: 6px;
+      border: none;
+      background-color: #333;
+      color: #fff;
+    }
+    .btn-primary {
+      margin-top: 2rem;
+      width: 100%;
+      background-color: #ffe600;
+      border: none;
+      color: #000;
+      padding: 0.9rem;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover {
+      background-color: #fff000;
+    }
+    .btn-primary:disabled {
+      background-color: #666;
+      cursor: not-allowed;
+    }
+    .progress {
+      background-color: #333;
+      height: 16px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+    .progress-bar {
+      height: 100%;
+      background-color: #ffe600;
+      width: 0;
+      transition: width 0.4s ease;
+    }
+    .status-text {
+      text-align: center;
+      margin-top: 1rem;
+      color: #aaa;
+    }
+    #download-link {
+      display: none;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    #download-link a {
+      color: #ffe600;
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <div class="panel">
-      <img src="https://github.com/Novemk/vocal-mixerSTR/blob/main/default_cover.png?raw=true" alt="logo" class="logo" />
-      <h1 class="title">CETRO - 5.M.A [reimagined] Challenge</h1>
+    <h1>清唱混音合成器</h1>
+    <label for="vocal-upload" class="file-label">選擇清唱檔案</label>
+    <input type="file" id="vocal-upload" accept="audio/mp3, audio/wav">
+    <div class="file-name" id="file-name">未選擇檔案</div>
 
-      <label class="section-label">請上傳清唱音檔 (mp3 或 wav)</label>
-      <label class="upload-button">
-        <input type="file" id="vocal" accept="audio/*" hidden />
-        <span id="file-name">上傳檔案：未選擇</span>
-      </label>
+    <label>歌唱者名稱</label>
+    <input type="text" id="singer-name" placeholder="請輸入名稱...">
 
-      <label class="section-label">輸入歌唱者名稱：</label>
-      <input type="text" id="singer" placeholder="例如：Cetro - 5.M.A" />
+    <label>輸出格式</label>
+    <div class="format-select">
+      <button class="format-btn selected" id="format-mp3">MP3（較快完成）</button>
+      <button class="format-btn" id="format-mp4">MP4</button>
+    </div>
 
-      <label class="section-label">選擇輸出格式：</label>
-      <div class="format-options">
-        <button type="button" class="format-button" data-format="mp3">MP3<br />(較快完成)</button>
-        <button type="button" class="format-button" data-format="mp4">MP4<br />(1:1 影片)</button>
-      </div>
+    <button class="btn-primary" id="start-btn">開始混音</button>
 
-      <button id="start" class="start-button">開始合成</button>
+    <div class="status-text" id="status-text">尚未開始合成</div>
 
-      <p class="waiting-hint" id="waiting-text">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
+    <div class="progress">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="status-text" id="progress-percent">0%</div>
+    <div class="status-text" id="elapsed-time">已處理時間：0 秒</div>
 
-      <div class="progress-wrapper">
-        <div class="progress-bar-container">
-          <div class="progress-bar" id="progress-bar"></div>
-        </div>
-        <span id="progress-percent">0%</span>
-      </div>
-      <p id="elapsed-time">已經處理時間：0 秒</p>
-
-      <a id="download-link" class="download-button" href="#" download>下載合成檔案</a>
+    <div id="download-link">
+      <p>混音完成！<a href="#" id="download-href">下載合成檔案</a></p>
     </div>
   </div>
-
-  <script src="/static/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
