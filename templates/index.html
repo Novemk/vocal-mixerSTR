@@ -15,7 +15,7 @@
     <p>請上傳清唱音檔（mp3 或 wav）</p>
     <input type="file" id="fileInput" accept=".mp3,.wav" hidden />
     <button id="uploadBtn">上傳檔案</button>
-    <p id="fileNameDisplay"></p>
+    <p id="fileNameDisplay" class="file-name"></p>
 
     <!-- 輸出格式 -->
     <p>選擇輸出格式</p>
@@ -26,7 +26,7 @@
 
     <!-- 開始合成 -->
     <button id="startBtn">開始合成</button>
-    <p id="statusMsg" class="status-msg">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
+    <p id="statusMsg" class="status-msg" style="display:none;"></p>
     <div class="progress-bar-wrapper">
       <div id="progressBar" class="progress-bar"></div>
     </div>
