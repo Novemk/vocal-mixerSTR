@@ -1,43 +1,31 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>清唱混音產生器</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <meta charset="UTF-8">
+  <title>清唱混音工具 - CETRO Style</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <div class="container">
-    <h1>🎵 清唱混音產生器</h1>
-
-    <label class="upload-btn">
-      <input type="file" id="vocal" accept=".mp3, .wav" hidden />
-      <span id="upload-label">選擇清唱檔案</span>
-    </label>
-
-    <div class="file-name" id="file-name"></div>
-
-    <input type="text" id="singer" placeholder="輸入歌唱者名稱"/>
-
-    <div class="format-select">
-      <button class="format-btn selected" data-format="mp3">合成 MP3（較快完成）</button>
-      <button class="format-btn" data-format="mp4">合成影片 MP4</button>
+    <h1>🎙️ 清唱混音合成工具</h1>
+    <div class="card">
+      <label class="upload-label" for="vocalInput" id="fileLabel">上傳清唱檔案</label>
+      <input type="file" id="vocalInput" name="vocal" accept=".mp3,.wav" hidden>
+      <input type="text" id="singerInput" placeholder="輸入歌唱者名稱">
+      <div class="format-selector">
+        <button class="format-btn selected" data-format="mp3">MP3（較快完成）</button>
+        <button class="format-btn" data-format="mp4">MP4（含封面）</button>
+      </div>
+      <button id="submitBtn">開始混音</button>
+      <p id="noticeText">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
+      <div class="progress-wrapper">
+        <div class="progress-bar" id="progressBar"></div>
+        <div class="progress-percent" id="progressPercent">0%</div>
+        <div class="progress-time" id="elapsedTime">已處理時間：0 秒</div>
+      </div>
+      <a id="downloadLink" href="#" download>⬇️ 下載合成檔案</a>
     </div>
-
-    <button id="start-btn">開始混音</button>
-
-    <div id="status-text" class="hidden">混音合成中，需 1~2 分鐘內，請耐心等候。</div>
-
-    <div class="progress-container hidden">
-      <div class="progress-bar" id="progress-bar"></div>
-      <div class="progress-percent" id="progress-percent">0%</div>
-    </div>
-
-    <div class="elapsed-time hidden">已處理時間：<span id="time">0</span> 秒</div>
-
-    <a id="download-link" class="hidden" download>⬇ 下載合成檔案</a>
   </div>
-
   <script src="/static/script.js"></script>
 </body>
 </html>
