@@ -1,87 +1,103 @@
+// script.js
+
 document.addEventListener("DOMContentLoaded", function () {
-  const vocalInput = document.getElementById("vocal");
-  const filenameDisplay = document.getElementById("filename");
-  const formatButtons = document.querySelectorAll(".format-button");
-  const progressBar = document.getElementById("progress-bar");
-  const progressText = document.getElementById("progress-text");
-  const timeDisplay = document.getElementById("elapsed-time");
-  const submitBtn = document.getElementById("submitBtn");
-  const reminderText = document.getElementById("reminder-text");
+  const fileInput = document.getElementById("vocal");
+  const fileNameDisplay = document.getElementById("file-name");
+  const singerInput = document.getElementById("singer");
+  const outputOptions = document.querySelectorAll(".output-option");
+  const startButton = document.getElementById("start-button");
   const downloadLink = document.getElementById("download-link");
-  const form = document.getElementById("upload-form");
+  const progressBar = document.getElementById("progress-bar");
+  const progressPercent = document.getElementById("progress-percent");
+  const statusMessage = document.getElementById("status-message");
+  const elapsedTimeDisplay = document.getElementById("elapsed-time");
 
-  let selectedFormat = "mp3";
-  let interval = null;
-  let startTime = null;
+  let selectedOutput = "mp4";
 
-  vocalInput.addEventListener("change", function () {
-    const file = this.files[0];
-    filenameDisplay.innerText = file ? file.name : "未選擇檔案";
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (file) {
+      fileNameDisplay.textContent = file.name;
+    }
   });
 
-  formatButtons.forEach(button => {
-    button.addEventListener("click", function () {
-      formatButtons.forEach(btn => btn.classList.remove("active"));
-      this.classList.add("active");
-      selectedFormat = this.dataset.format;
+  outputOptions.forEach((option) => {
+    option.addEventListener("click", () => {
+      outputOptions.forEach((o) => o.classList.remove("selected"));
+      option.classList.add("selected");
+      selectedOutput = option.dataset.format;
     });
   });
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const formData = new FormData(form);
-    formData.append("format", selectedFormat);
+  startButton.addEventListener("click", async () => {
+    const file = fileInput.files[0];
+    const singer = singerInput.value.trim() || "Unknown Artist";
 
-    submitBtn.disabled = true;
-    vocalInput.disabled = true;
-    formatButtons.forEach(btn => btn.disabled = true);
-    reminderText.style.display = "block";
-    progressBar.style.width = "0%";
-    progressText.innerText = "0%";
-    timeDisplay.innerText = "已處理時間：0 秒";
+    if (!file) {
+      alert("請先上傳清唱檔案。");
+      return;
+    }
+
+    startButton.disabled = true;
+    fileInput.disabled = true;
+    singerInput.disabled = true;
+    outputOptions.forEach((o) => (o.style.pointerEvents = "none"));
     downloadLink.style.display = "none";
 
-    let progress = 0;
-    startTime = Date.now();
+    statusMessage.textContent = "混音合成中，需 1~2 分鐘內，請耐心等候。";
+    progressBar.style.width = "0%";
+    progressPercent.textContent = "0%";
+    elapsedTimeDisplay.textContent = "0 秒";
 
-    interval = setInterval(() => {
-      progress += 2 + Math.random() * 3;
-      if (progress >= 99) progress = 99;
-      progressBar.style.width = progress + "%";
-      progressText.innerText = Math.floor(progress) + "%";
-      const seconds = Math.floor((Date.now() - startTime) / 1000);
-      timeDisplay.innerText = `已處理時間：${seconds} 秒`;
+    let startTime = Date.now();
+    let timer = setInterval(() => {
+      let elapsed = Math.floor((Date.now() - startTime) / 1000);
+      elapsedTimeDisplay.textContent = `${elapsed} 秒`;
+    }, 1000);
+
+    let progress = 0;
+    let fakeProgress = setInterval(() => {
+      if (progress < 95) {
+        progress += Math.random() * 2;
+        progress = Math.min(progress, 95);
+        progressBar.style.width = `${progress.toFixed(0)}%`;
+        progressPercent.textContent = `${progress.toFixed(0)}%`;
+      }
     }, 500);
 
-    fetch("/upload", {
-      method: "POST",
-      body: formData,
-    })
-      .then(res => res.json())
-      .then(data => {
-        clearInterval(interval);
-        progressBar.style.width = "100%";
-        progressText.innerText = "100%";
-        const seconds = Math.floor((Date.now() - startTime) / 1000);
-        timeDisplay.innerText = `總處理時間：${seconds} 秒`;
+    const formData = new FormData();
+    formData.append("vocal", file);
+    formData.append("singer", singer);
+    formData.append("format", selectedOutput);
 
-        if (data.video_url || data.audio_url) {
-          downloadLink.href = data.video_url || data.audio_url;
-          downloadLink.style.display = "inline-block";
-        } else {
-          alert("處理失敗，請稍後再試。");
-        }
-
-        submitBtn.disabled = false;
-        vocalInput.disabled = false;
-        formatButtons.forEach(btn => btn.disabled = false);
-      })
-      .catch(err => {
-        clearInterval(interval);
-        alert("處理過程中發生錯誤。");
-        submitBtn.disabled = false;
-        vocalInput.disabled = false;
-        formatButtons.forEach(btn => btn.disabled = false);
+    try {
+      const res = await fetch("/upload", {
+        method: "POST",
+        body: formData,
       });
+      const data = await res.json();
+
+      if (data.video_url || data.audio_url) {
+        clearInterval(fakeProgress);
+        clearInterval(timer);
+        progressBar.style.width = `100%`;
+        progressPercent.textContent = `100%`;
+        statusMessage.textContent = "合成完成！點選下方按鈕下載。";
+        downloadLink.href = data.video_url || data.audio_url;
+        downloadLink.style.display = "block";
+      } else {
+        throw new Error(data.error || "未知錯誤");
+      }
+    } catch (e) {
+      clearInterval(fakeProgress);
+      clearInterval(timer);
+      statusMessage.textContent = `發生錯誤：${e.message}`;
+      console.error(e);
+    }
+
+    startButton.disabled = false;
+    fileInput.disabled = false;
+    singerInput.disabled = false;
+    outputOptions.forEach((o) => (o.style.pointerEvents = "auto"));
   });
 });
