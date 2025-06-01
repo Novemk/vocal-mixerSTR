@@ -1,43 +1,51 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>清唱混音合成器</title>
+  <title>Cetro - 5.M.A [reimagined] Challenge</title>
   <link rel="stylesheet" href="/static/style.css" />
 </head>
+
 <body>
   <div class="container">
-    <h1 class="title">Cetro - 5.M.A [reimagined] challenge</h1>
+    <div class="header">
+      <img src="https://github.com/Novemk/vocal-mixerSTR/blob/main/default_cover.png?raw=true" alt="Logo" class="logo" />
+      <h1 class="title">CETRO - 5.M.A [reimagined] CHALLENGE</h1>
+    </div>
+
     <form id="upload-form">
-      <label class="upload-label" id="upload-label">
-        <span id="file-name">選擇檔案</span>
-        <input type="file" id="vocal" name="vocal" accept="audio/mp3, audio/wav" required hidden />
-      </label>
-      <input type="text" id="singer" name="singer" placeholder="請輸入歌唱者名稱" required />
-
-      <div class="format-select">
-        <button type="button" id="mp3-button" class="format-btn selected">合成 MP3（較快完成）</button>
-        <button type="button" id="mp4-button" class="format-btn">合成 MP4</button>
+      <label for="vocal" class="label">請上傳清唱音檔(mp3或wav)</label>
+      <div class="file-group">
+        <input type="file" id="vocal" name="vocal" accept=".mp3,.wav" hidden />
+        <button type="button" id="file-btn" class="file-button">上傳檔案：<span id="filename">檔名</span></button>
       </div>
 
-      <button type="submit" id="submit-button">開始混音</button>
+      <div class="output-group">
+        <label class="label">選擇輸出格式</label>
+        <div class="format-buttons">
+          <button type="button" id="btn-mp3" class="format-button selected" data-format="mp3">MP3<br /><span class="small">(較快完成)</span></button>
+          <button type="button" id="btn-mp4" class="format-button" data-format="mp4">MP4<br /><span class="small">(1:1影片)</span></button>
+        </div>
+      </div>
+
+      <div class="action-group">
+        <button type="submit" id="start-btn" class="start-button">開始合成</button>
+        <p id="status-msg" class="status-message hidden">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
+        <div id="progress-wrap" class="progress-wrap hidden">
+          <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+          </div>
+          <p><span id="progress-percent">0%</span></p>
+          <p id="elapsed-time">已經處理時間：0 秒</p>
+        </div>
+        <a id="download-link" class="download-button hidden" href="#" download>下載合成檔案</a>
+      </div>
     </form>
-
-    <div id="loading" class="hidden">
-      <p>混音合成中，需 1~2 分鐘內，請耐心等候。</p>
-      <div class="progress-bar">
-        <div id="progress" class="progress-fill" style="width: 0%"></div>
-      </div>
-      <p id="progress-percent">0%</p>
-      <p id="elapsed-time">已處理時間：0 秒</p>
-    </div>
-
-    <div id="result" class="hidden">
-      <a id="download-link" href="#" download>下載合成檔案</a>
-    </div>
   </div>
 
   <script src="/static/script.js"></script>
 </body>
+
 </html>
