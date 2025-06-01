@@ -1,75 +1,43 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const vocalInput = document.getElementById("vocal");
-  const fileNameDisplay = document.getElementById("file-name-display");
-  const formatSelect = document.getElementById("format");
-  const submitBtn = document.getElementById("submitBtn");
-  const progressContainer = document.getElementById("progressContainer");
-  const progressBar = document.getElementById("progressBar");
-  const progressText = document.getElementById("progressText");
-  const timerDisplay = document.getElementById("timerDisplay");
-  const downloadLink = document.getElementById("downloadLink");
-  const statusMessage = document.getElementById("statusMessage");
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>清唱混音合成器</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Cetro - 5.M.A [reimagined] challenge</h1>
+    <form id="upload-form">
+      <label class="upload-label" id="upload-label">
+        <span id="file-name">選擇檔案</span>
+        <input type="file" id="vocal" name="vocal" accept="audio/mp3, audio/wav" required hidden />
+      </label>
+      <input type="text" id="singer" name="singer" placeholder="請輸入歌唱者名稱" required />
 
-  let interval;
+      <div class="format-select">
+        <button type="button" id="mp3-button" class="format-btn selected">合成 MP3（較快完成）</button>
+        <button type="button" id="mp4-button" class="format-btn">合成 MP4</button>
+      </div>
 
-  vocalInput.addEventListener("change", () => {
-    if (vocalInput.files && vocalInput.files[0]) {
-      fileNameDisplay.textContent = `上傳檔案：${vocalInput.files[0].name}`;
-    } else {
-      fileNameDisplay.textContent = "上傳檔案：檔名";
-    }
-  });
+      <button type="submit" id="submit-button">開始混音</button>
+    </form>
 
-  formatSelect.addEventListener("change", () => {
-    document.querySelectorAll(".format-option").forEach(opt => {
-      opt.classList.remove("selected");
-    });
-    formatSelect.selectedOptions[0].parentElement.classList.add("selected");
-  });
+    <div id="loading" class="hidden">
+      <p>混音合成中，需 1~2 分鐘內，請耐心等候。</p>
+      <div class="progress-bar">
+        <div id="progress" class="progress-fill" style="width: 0%"></div>
+      </div>
+      <p id="progress-percent">0%</p>
+      <p id="elapsed-time">已處理時間：0 秒</p>
+    </div>
 
-  submitBtn.addEventListener("click", async () => {
-    const formData = new FormData(document.getElementById("uploadForm"));
-    const format = formatSelect.value;
+    <div id="result" class="hidden">
+      <a id="download-link" href="#" download>下載合成檔案</a>
+    </div>
+  </div>
 
-    submitBtn.disabled = true;
-    formatSelect.disabled = true;
-    vocalInput.disabled = true;
-    progressContainer.style.display = "block";
-    downloadLink.style.display = "none";
-    progressBar.style.width = "0%";
-    progressText.textContent = "0%";
-    statusMessage.textContent = "混音合成中，需 1~2 分鐘內，請耐心等候。";
-
-    let startTime = Date.now();
-    interval = setInterval(() => {
-      let seconds = Math.floor((Date.now() - startTime) / 1000);
-      timerDisplay.textContent = `已經處理時間：${seconds}秒`;
-    }, 1000);
-
-    try {
-      const response = await fetch("/upload", {
-        method: "POST",
-        body: formData
-      });
-      const data = await response.json();
-
-      clearInterval(interval);
-      submitBtn.disabled = false;
-      formatSelect.disabled = false;
-      vocalInput.disabled = false;
-      progressBar.style.width = "100%";
-      progressText.textContent = "100%";
-
-      if (data.video_url) {
-        downloadLink.href = data.video_url;
-        downloadLink.style.display = "block";
-      } else {
-        statusMessage.textContent = "發生錯誤，請重試。";
-      }
-    } catch (error) {
-      clearInterval(interval);
-      statusMessage.textContent = "處理過程中發生錯誤。";
-      console.error("Upload error:", error);
-    }
-  });
-});
+  <script src="/static/script.js"></script>
+</body>
+</html>
