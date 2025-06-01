@@ -1,9 +1,10 @@
 Flask
+moviepy==1.0.3
 pydub==0.25.1
 requests
-moviepy==1.0.3
 imageio
 imageio-ffmpeg
 decorator
-werkzeug==2.3.7  # 避免與 pydub 或 flask upload 衝突
+werkzeug==2.3.7
 tqdm
+Pillow==9.5.0   # ✅ 強制使用支援 ANTIALIAS 的版本
