@@ -1,53 +1,75 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CETRO - 5.M.A Challenge</title>
-  <link rel="stylesheet" href="/static/style.css" />
-</head>
-<body>
-  <div class="challenge-container">
-    <header class="challenge-header">
-      <h1 class="challenge-title">CETRO - 5.M.A [REIMAGINED]</h1>
-      <h2 class="challenge-subtitle">CHALLENGE</h2>
-    </header>
+document.addEventListener("DOMContentLoaded", () => {
+  const vocalInput = document.getElementById("vocal");
+  const fileNameDisplay = document.getElementById("file-name-display");
+  const formatSelect = document.getElementById("format");
+  const submitBtn = document.getElementById("submitBtn");
+  const progressContainer = document.getElementById("progressContainer");
+  const progressBar = document.getElementById("progressBar");
+  const progressText = document.getElementById("progressText");
+  const timerDisplay = document.getElementById("timerDisplay");
+  const downloadLink = document.getElementById("downloadLink");
+  const statusMessage = document.getElementById("statusMessage");
 
-    <section class="upload-section">
-      <label for="vocal">請上傳清唱音檔(mp3或wav)</label>
-      <div class="file-input-wrapper">
-        <input type="file" id="vocal" name="vocal" accept=".mp3,.wav" />
-        <span id="file-name-display">上傳檔案：檔名</span>
-      </div>
-    </section>
+  let interval;
 
-    <section class="format-section">
-      <label>選擇輸出格式</label>
-      <div class="format-buttons">
-        <button class="format-btn" data-format="mp3">MP3<br><span>(較快完成)</span></button>
-        <button class="format-btn selected" data-format="mp4">MP4<br><span>(1:1影片)</span></button>
-      </div>
-    </section>
+  vocalInput.addEventListener("change", () => {
+    if (vocalInput.files && vocalInput.files[0]) {
+      fileNameDisplay.textContent = `上傳檔案：${vocalInput.files[0].name}`;
+    } else {
+      fileNameDisplay.textContent = "上傳檔案：檔名";
+    }
+  });
 
-    <section class="action-section">
-      <button id="start-btn">開始合成</button>
-      <p class="waiting-note">混音合成中，需 1~2分鐘內，請耐心等候。</p>
-      <div class="progress-wrapper">
-        <div class="progress-bar">
-          <div id="progress-fill"></div>
-        </div>
-        <div class="progress-info">
-          <span id="progress-percent">0%</span>
-          <span id="elapsed-time">已經處理時間：0秒</span>
-        </div>
-      </div>
-    </section>
+  formatSelect.addEventListener("change", () => {
+    document.querySelectorAll(".format-option").forEach(opt => {
+      opt.classList.remove("selected");
+    });
+    formatSelect.selectedOptions[0].parentElement.classList.add("selected");
+  });
 
-    <section class="download-section">
-      <a id="download-link" href="#" class="download-btn hidden">下載合成檔案</a>
-    </section>
-  </div>
+  submitBtn.addEventListener("click", async () => {
+    const formData = new FormData(document.getElementById("uploadForm"));
+    const format = formatSelect.value;
 
-  <script src="/static/script.js"></script>
-</body>
-</html>
+    submitBtn.disabled = true;
+    formatSelect.disabled = true;
+    vocalInput.disabled = true;
+    progressContainer.style.display = "block";
+    downloadLink.style.display = "none";
+    progressBar.style.width = "0%";
+    progressText.textContent = "0%";
+    statusMessage.textContent = "混音合成中，需 1~2 分鐘內，請耐心等候。";
+
+    let startTime = Date.now();
+    interval = setInterval(() => {
+      let seconds = Math.floor((Date.now() - startTime) / 1000);
+      timerDisplay.textContent = `已經處理時間：${seconds}秒`;
+    }, 1000);
+
+    try {
+      const response = await fetch("/upload", {
+        method: "POST",
+        body: formData
+      });
+      const data = await response.json();
+
+      clearInterval(interval);
+      submitBtn.disabled = false;
+      formatSelect.disabled = false;
+      vocalInput.disabled = false;
+      progressBar.style.width = "100%";
+      progressText.textContent = "100%";
+
+      if (data.video_url) {
+        downloadLink.href = data.video_url;
+        downloadLink.style.display = "block";
+      } else {
+        statusMessage.textContent = "發生錯誤，請重試。";
+      }
+    } catch (error) {
+      clearInterval(interval);
+      statusMessage.textContent = "處理過程中發生錯誤。";
+      console.error("Upload error:", error);
+    }
+  });
+});
