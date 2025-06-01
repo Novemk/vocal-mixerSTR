@@ -21,23 +21,24 @@ document.getElementById('startBtn').onclick = function () {
         return;
     }
 
-    // 🔒 禁用按鈕避免重複觸發
+    // 禁用按鈕避免連點
     document.getElementById('startBtn').disabled = true;
     document.getElementById('status').style.cursor = 'default';
-
-    // 📤 顯示初始進度
     document.getElementById('status').textContent = '混音合成中，需 1~2 分鐘內，請耐心等候。';
+
+    // 顯示進度條與時間
     document.getElementById('progress').style.width = '0%';
+    document.getElementById('timer').textContent = '已經處理時間：0 秒';
     timer = 0;
 
     interval = setInterval(() => {
         timer++;
         document.getElementById('timer').textContent = `已經處理時間：${timer} 秒`;
-        let percent = Math.min(100, timer * 1.5); // 模擬進度（可依實際改變）
+        let percent = Math.min(100, timer * 1.5); // 模擬進度
         document.getElementById('progress').style.width = percent + '%';
     }, 1000);
 
-    // 🔄 傳送資料到後端
+    // 上傳與處理
     const formData = new FormData();
     formData.append('file', fileInput.files[0]);
     formData.append('output_type', outputType);
@@ -52,16 +53,17 @@ document.getElementById('startBtn').onclick = function () {
         document.getElementById('startBtn').disabled = false;
 
         if (data.status === 'done') {
+            // ✅ 強制進度條補齊
+            document.getElementById('progress').style.width = '100%';
+
             document.getElementById('status').textContent = '合成完成！點我下載檔案';
             document.getElementById('status').style.cursor = 'pointer';
-
             document.getElementById('status').onclick = () => {
                 window.location.href = `/download/${data.file}`;
             };
         } else {
             document.getElementById('status').textContent = '❌ 合成失敗，請稍後再試';
             document.getElementById('status').style.cursor = 'default';
-            console.error('❌ 錯誤訊息：', data.message || '未知錯誤');
         }
     })
     .catch(err => {
