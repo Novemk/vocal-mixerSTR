@@ -1,75 +1,94 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const vocalInput = document.getElementById("vocal");
-  const fileNameDisplay = document.getElementById("file-name-display");
-  const formatSelect = document.getElementById("format");
-  const submitBtn = document.getElementById("submitBtn");
-  const progressContainer = document.getElementById("progressContainer");
-  const progressBar = document.getElementById("progressBar");
-  const progressText = document.getElementById("progressText");
-  const timerDisplay = document.getElementById("timerDisplay");
-  const downloadLink = document.getElementById("downloadLink");
-  const statusMessage = document.getElementById("statusMessage");
+// script.js
 
-  let interval;
+const uploadInput = document.getElementById("vocal");
+const uploadLabel = document.getElementById("upload-label");
+const singerInput = document.getElementById("singer");
+const mp3Btn = document.getElementById("mp3-option");
+const mp4Btn = document.getElementById("mp4-option");
+const startBtn = document.getElementById("start-btn");
+const resultDiv = document.getElementById("result");
+const downloadBtn = document.getElementById("download-btn");
+const progressBar = document.getElementById("progress-bar");
+const progressText = document.getElementById("progress-text");
+const elapsedTime = document.getElementById("elapsed-time");
+const notice = document.getElementById("processing-notice");
 
-  vocalInput.addEventListener("change", () => {
-    if (vocalInput.files && vocalInput.files[0]) {
-      fileNameDisplay.textContent = `上傳檔案：${vocalInput.files[0].name}`;
-    } else {
-      fileNameDisplay.textContent = "上傳檔案：檔名";
+let selectedFormat = "mp4";
+
+uploadInput.addEventListener("change", () => {
+    const file = uploadInput.files[0];
+    if (file) {
+        uploadLabel.textContent = `上傳檔案：${file.name}`;
     }
-  });
+});
 
-  formatSelect.addEventListener("change", () => {
-    document.querySelectorAll(".format-option").forEach(opt => {
-      opt.classList.remove("selected");
-    });
-    formatSelect.selectedOptions[0].parentElement.classList.add("selected");
-  });
+mp3Btn.addEventListener("click", () => {
+    selectedFormat = "mp3";
+    mp3Btn.classList.add("selected");
+    mp4Btn.classList.remove("selected");
+});
 
-  submitBtn.addEventListener("click", async () => {
-    const formData = new FormData(document.getElementById("uploadForm"));
-    const format = formatSelect.value;
+mp4Btn.addEventListener("click", () => {
+    selectedFormat = "mp4";
+    mp4Btn.classList.add("selected");
+    mp3Btn.classList.remove("selected");
+});
 
-    submitBtn.disabled = true;
-    formatSelect.disabled = true;
-    vocalInput.disabled = true;
-    progressContainer.style.display = "block";
-    downloadLink.style.display = "none";
+startBtn.addEventListener("click", () => {
+    const file = uploadInput.files[0];
+    const singer = singerInput.value.trim();
+    if (!file || !singer) {
+        alert("請上傳檔案並填寫歌唱者名稱");
+        return;
+    }
+
+    // Disable UI
+    uploadInput.disabled = true;
+    singerInput.disabled = true;
+    mp3Btn.disabled = true;
+    mp4Btn.disabled = true;
+    startBtn.disabled = true;
+
+    notice.style.display = "block";
     progressBar.style.width = "0%";
     progressText.textContent = "0%";
-    statusMessage.textContent = "混音合成中，需 1~2 分鐘內，請耐心等候。";
+    elapsedTime.textContent = "已處理時間：0 秒";
+    resultDiv.style.display = "none";
+    downloadBtn.style.display = "none";
 
-    let startTime = Date.now();
-    interval = setInterval(() => {
-      let seconds = Math.floor((Date.now() - startTime) / 1000);
-      timerDisplay.textContent = `已經處理時間：${seconds}秒`;
+    const formData = new FormData();
+    formData.append("vocal", file);
+    formData.append("singer", singer);
+    formData.append("format", selectedFormat);
+
+    let percent = 0;
+    let seconds = 0;
+
+    const timer = setInterval(() => {
+        seconds++;
+        percent = Math.min(100, Math.floor((seconds / 90) * 100));
+        progressBar.style.width = `${percent}%`;
+        progressText.textContent = `${percent}%`;
+        elapsedTime.textContent = `已處理時間：${seconds} 秒`;
     }, 1000);
 
-    try {
-      const response = await fetch("/upload", {
+    fetch("/upload", {
         method: "POST",
         body: formData
-      });
-      const data = await response.json();
+    })
+    .then(response => response.json())
+    .then(data => {
+        clearInterval(timer);
+        if (data.error) throw new Error(data.error);
 
-      clearInterval(interval);
-      submitBtn.disabled = false;
-      formatSelect.disabled = false;
-      vocalInput.disabled = false;
-      progressBar.style.width = "100%";
-      progressText.textContent = "100%";
-
-      if (data.video_url) {
-        downloadLink.href = data.video_url;
-        downloadLink.style.display = "block";
-      } else {
-        statusMessage.textContent = "發生錯誤，請重試。";
-      }
-    } catch (error) {
-      clearInterval(interval);
-      statusMessage.textContent = "處理過程中發生錯誤。";
-      console.error("Upload error:", error);
-    }
-  });
+        progressBar.style.width = `100%`;
+        progressText.textContent = `100%`;
+        downloadBtn.href = data.video_url;
+        downloadBtn.style.display = "inline-block";
+        resultDiv.style.display = "block";
+    })
+    .catch(err => {
+        clearInterval(timer);
+        alert("處理失敗：" + err.message);
+    });
 });
