@@ -1,31 +1,41 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>清唱混音工具 - CETRO Style</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CETRO - 5.M.A Remix Challenge</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <div class="container">
-    <h1>🎙️ 清唱混音合成工具</h1>
-    <div class="card">
-      <label class="upload-label" for="vocalInput" id="fileLabel">上傳清唱檔案</label>
-      <input type="file" id="vocalInput" name="vocal" accept=".mp3,.wav" hidden>
-      <input type="text" id="singerInput" placeholder="輸入歌唱者名稱">
-      <div class="format-selector">
-        <button class="format-btn selected" data-format="mp3">MP3（較快完成）</button>
-        <button class="format-btn" data-format="mp4">MP4（含封面）</button>
-      </div>
-      <button id="submitBtn">開始混音</button>
-      <p id="noticeText">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
-      <div class="progress-wrapper">
-        <div class="progress-bar" id="progressBar"></div>
-        <div class="progress-percent" id="progressPercent">0%</div>
-        <div class="progress-time" id="elapsedTime">已處理時間：0 秒</div>
-      </div>
-      <a id="downloadLink" href="#" download>⬇️ 下載合成檔案</a>
+    <h1>CETRO - 5.M.A【REIMAGINED】</h1>
+    <h2>CHALLENGE</h2>
+
+    <!-- 上傳 -->
+    <p>請上傳清唱音檔（mp3 或 wav）</p>
+    <input type="file" id="fileInput" accept=".mp3,.wav" hidden />
+    <button id="uploadBtn">上傳檔案</button>
+    <p id="fileNameDisplay"></p>
+
+    <!-- 輸出格式 -->
+    <p>選擇輸出格式</p>
+    <div class="format-options">
+      <button class="format-btn selected" data-format="MP3" id="mp3Btn">MP3（較快完成）</button>
+      <button class="format-btn" data-format="MP4" id="mp4Btn">MP4（1:1影片）</button>
     </div>
+
+    <!-- 開始合成 -->
+    <button id="startBtn">開始合成</button>
+    <p id="statusMsg" class="status-msg">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
+    <div class="progress-bar-wrapper">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <p id="timeDisplay">已經處理時間：0秒</p>
+
+    <!-- 下載 -->
+    <a id="downloadLink" href="#" class="download-link" style="display: none;">下載合成檔案</a>
   </div>
-  <script src="/static/script.js"></script>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
