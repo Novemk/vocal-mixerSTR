@@ -55,6 +55,7 @@ def synthesize_audio(filepath, output_format):
             progress["filename"] = output_path
 
         elif output_format == "MP4":
+            # 轉成 WAV 避免 moviepy 讀 MP3 出錯
             temp_wav_path = os.path.join(app.config["UPLOAD_FOLDER"], f"temp_{uid}.wav")
             sound = AudioSegment.from_file(filepath)
             sound.export(temp_wav_path, format="wav")
@@ -64,10 +65,11 @@ def synthesize_audio(filepath, output_format):
                 progress["status"] = "error"
                 progress["filename"] = None
                 os.remove(temp_wav_path)
+                print("[MP4] 音訊長度超過 90 秒，已中止合成")
                 return
 
             if not os.path.exists(COVER_IMAGE):
-                print("[錯誤] 找不到封面圖片")
+                print("[MP4] 找不到封面圖片")
                 progress["status"] = "error"
                 return
 
@@ -109,43 +111,10 @@ def upload():
     if file:
         filename = secure_filename(file.filename)
         ext = os.path.splitext(filename)[1].lower()
+        print(f"[UPLOAD] 檔名: {filename} 副檔名: {ext}")
+
         if ext not in [".mp3", ".wav"]:
+            print("[UPLOAD] 格式錯誤")
             return jsonify({"success": False, "message": "只允許上傳 MP3 或 WAV 音訊檔案"})
 
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-        file.save(filepath)
-        return jsonify({"success": True, "filepath": filepath, "filename": filename})
-    return jsonify({"success": False, "message": "未選擇檔案"})
-
-
-@app.route("/synthesize", methods=["POST"])
-def synthesize():
-    data = request.json
-    filepath = data.get("filepath")
-    output_format = data.get("format")
-
-    if not filepath or not output_format:
-        return jsonify({"success": False, "message": "缺少參數"})
-
-    thread = threading.Thread(target=synthesize_audio, args=(filepath, output_format))
-    thread.daemon = True
-    thread.start()
-
-    return jsonify({"success": True})
-
-
-@app.route("/progress")
-def get_progress():
-    return jsonify(progress)
-
-
-@app.route("/download")
-def download():
-    if progress["filename"] and progress["status"] == "done":
-        return send_file(progress["filename"], as_attachment=True)
-    return "尚未完成", 400
-
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+        filepath = os.path.join(app.config["UPLOAD_FOLDER"], f_]()
