@@ -1,144 +1,124 @@
+<style>
 body {
-  margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: #101010;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 40px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background: #ffffff url('/static/bg-deco.png') no-repeat right top;
+    background-size: contain;
 }
 
 .container {
-  max-width: 480px;
-  width: 100%;
-  background: #1c1c1c;
-  border: 2px solid #ffaa00;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 0 12px rgba(255, 255, 0, 0.2);
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #f4f4f4;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border: 5px solid #1c1c1c;
 }
 
 h1 {
-  text-align: center;
-  margin-bottom: 24px;
-  color: #ffcc00;
+    font-size: 28px;
+    color: #1c1c1c;
+    margin-bottom: 20px;
 }
 
-.upload-btn {
-  display: inline-block;
-  background: #333;
-  color: #fff;
-  padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  border: 1px solid #777;
-  transition: 0.2s;
+.upload-label {
+    display: inline-block;
+    background: #1c1c1c;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 
-.upload-btn:hover {
-  background: #555;
+.upload-label:hover {
+    background: #333333;
 }
 
-.file-name {
-  font-size: 14px;
-  margin-bottom: 14px;
+#file-name {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+input[type="file"] {
+    display: none;
 }
 
 input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #555;
-  margin-bottom: 14px;
-  background: #222;
-  color: #fff;
+    width: 70%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #aaa;
+    margin: 10px 0;
 }
 
-.format-select {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
+.format-select button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: 2px solid #aaa;
+    border-radius: 10px;
+    background: #fff;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-.format-btn {
-  flex: 1;
-  margin: 0 4px;
-  padding: 10px;
-  background: #222;
-  border: 2px solid #555;
-  color: #fff;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
+.format-select button.selected {
+    border-color: #ffd700;
+    color: #ffd700;
 }
 
-.format-btn.selected {
-  border-color: #ffaa00;
-  color: #ffaa00;
+button#start {
+    background: #ffd700;
+    color: #000;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-#start-btn {
-  width: 100%;
-  padding: 12px;
-  background: #ffaa00;
-  color: #000;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 16px;
+button#start:hover {
+    background: #ffc800;
 }
 
-#status-text {
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #ccc;
+#status-message {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
 }
 
-.progress-container {
-  position: relative;
-  height: 20px;
-  background: #333;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  overflow: hidden;
+.progress {
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
 }
 
 .progress-bar {
-  height: 100%;
-  width: 0%;
-  background: #ffaa00;
-  transition: width 0.2s;
-}
-
-.progress-percent {
-  position: absolute;
-  right: 10px;
-  top: 0;
-  font-size: 12px;
-  line-height: 20px;
-  color: #000;
-  font-weight: bold;
-}
-
-.elapsed-time {
-  font-size: 14px;
-  margin-bottom: 12px;
+    width: 0%;
+    height: 20px;
+    background-color: #ffd700;
+    text-align: center;
+    line-height: 20px;
+    color: #000;
+    font-weight: bold;
+    transition: width 0.5s;
 }
 
 #download-link {
-  display: inline-block;
-  padding: 10px 16px;
-  background: #00aa66;
-  color: #fff;
-  border-radius: 6px;
-  text-align: center;
-  width: 100%;
-  text-decoration: none;
+    display: none;
+    margin-top: 20px;
+    font-size: 16px;
+    color: #0000ee;
+    text-decoration: underline;
 }
-
-.hidden {
-  display: none;
-}
+</style>
