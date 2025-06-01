@@ -1,103 +1,64 @@
-// script.js
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CETRO Vocal Mixer</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>CETRO - 5.M.A [reimagined] Challenge</h1>
+    </div>
 
-document.addEventListener("DOMContentLoaded", function () {
-  const fileInput = document.getElementById("vocal");
-  const fileNameDisplay = document.getElementById("file-name");
-  const singerInput = document.getElementById("singer");
-  const outputOptions = document.querySelectorAll(".output-option");
-  const startButton = document.getElementById("start-button");
-  const downloadLink = document.getElementById("download-link");
-  const progressBar = document.getElementById("progress-bar");
-  const progressPercent = document.getElementById("progress-percent");
-  const statusMessage = document.getElementById("status-message");
-  const elapsedTimeDisplay = document.getElementById("elapsed-time");
+    <div class="upload-section">
+      <label for="vocal">請上傳清唱音檔 (mp3或wav)</label>
+      <input type="file" id="vocal" name="vocal" accept=".mp3,.wav" onchange="handleFileChange(this)" />
+      <span id="file-name-display">上傳檔案：檔名</span>
+    </div>
 
-  let selectedOutput = "mp4";
+    <div class="singer-section">
+      <label for="singer">請輸入歌唱者名稱</label>
+      <input type="text" id="singer" name="singer" placeholder="例如：Cetro - 5.M.A" />
+    </div>
 
-  fileInput.addEventListener("change", () => {
-    const file = fileInput.files[0];
-    if (file) {
-      fileNameDisplay.textContent = file.name;
-    }
-  });
+    <div class="format-section">
+      <label for="format">選擇輸出格式</label>
+      <select id="format">
+        <option value="mp3">MP3（較快完成）</option>
+        <option value="mp4">MP4（1:1影片）</option>
+      </select>
+    </div>
 
-  outputOptions.forEach((option) => {
-    option.addEventListener("click", () => {
-      outputOptions.forEach((o) => o.classList.remove("selected"));
-      option.classList.add("selected");
-      selectedOutput = option.dataset.format;
-    });
-  });
+    <div class="action-section">
+      <button id="submit-btn">開始混音</button>
+    </div>
 
-  startButton.addEventListener("click", async () => {
-    const file = fileInput.files[0];
-    const singer = singerInput.value.trim() || "Unknown Artist";
+    <div class="progress-section hidden" id="progress-container">
+      <p id="wait-message">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
+      <div class="progress-bar">
+        <div class="progress-inner" id="progress-inner"></div>
+      </div>
+      <p id="progress-text">0%</p>
+      <p id="elapsed-time">已經處理時間：0 秒</p>
+    </div>
 
-    if (!file) {
-      alert("請先上傳清唱檔案。");
-      return;
-    }
+    <div class="download-section hidden" id="download-container">
+      <a id="download-link" href="#" download>下載合成檔案</a>
+    </div>
+  </div>
 
-    startButton.disabled = true;
-    fileInput.disabled = true;
-    singerInput.disabled = true;
-    outputOptions.forEach((o) => (o.style.pointerEvents = "none"));
-    downloadLink.style.display = "none";
-
-    statusMessage.textContent = "混音合成中，需 1~2 分鐘內，請耐心等候。";
-    progressBar.style.width = "0%";
-    progressPercent.textContent = "0%";
-    elapsedTimeDisplay.textContent = "0 秒";
-
-    let startTime = Date.now();
-    let timer = setInterval(() => {
-      let elapsed = Math.floor((Date.now() - startTime) / 1000);
-      elapsedTimeDisplay.textContent = `${elapsed} 秒`;
-    }, 1000);
-
-    let progress = 0;
-    let fakeProgress = setInterval(() => {
-      if (progress < 95) {
-        progress += Math.random() * 2;
-        progress = Math.min(progress, 95);
-        progressBar.style.width = `${progress.toFixed(0)}%`;
-        progressPercent.textContent = `${progress.toFixed(0)}%`;
-      }
-    }, 500);
-
-    const formData = new FormData();
-    formData.append("vocal", file);
-    formData.append("singer", singer);
-    formData.append("format", selectedOutput);
-
-    try {
-      const res = await fetch("/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-
-      if (data.video_url || data.audio_url) {
-        clearInterval(fakeProgress);
-        clearInterval(timer);
-        progressBar.style.width = `100%`;
-        progressPercent.textContent = `100%`;
-        statusMessage.textContent = "合成完成！點選下方按鈕下載。";
-        downloadLink.href = data.video_url || data.audio_url;
-        downloadLink.style.display = "block";
+  <script>
+    function handleFileChange(input) {
+      const fileDisplay = document.getElementById("file-name-display");
+      if (input.files && input.files[0]) {
+        fileDisplay.textContent = `上傳檔案：${input.files[0].name}`;
       } else {
-        throw new Error(data.error || "未知錯誤");
+        fileDisplay.textContent = "上傳檔案：檔名";
       }
-    } catch (e) {
-      clearInterval(fakeProgress);
-      clearInterval(timer);
-      statusMessage.textContent = `發生錯誤：${e.message}`;
-      console.error(e);
     }
-
-    startButton.disabled = false;
-    fileInput.disabled = false;
-    singerInput.disabled = false;
-    outputOptions.forEach((o) => (o.style.pointerEvents = "auto"));
-  });
-});
+  </script>
+  <script src="/static/script.js"></script>
+</body>
+</html>
