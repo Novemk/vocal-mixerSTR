@@ -1,103 +1,51 @@
-let selectedFormat = "MP3";
-let uploadedFilePath = "";
-let pollingInterval = null;
+let outputType = 'MP3';
+let timer = 0;
+let interval;
 
-const uploadBtn = document.getElementById("uploadBtn");
-const fileInput = document.getElementById("fileInput");
-const fileName = document.getElementById("fileName");
-const formatBtns = document.querySelectorAll(".format-btn");
-const startBtn = document.getElementById("startBtn");
-const downloadLink = document.getElementById("downloadLink");
-const progressBar = document.getElementById("progressFill");
-const progressText = document.getElementById("progressText");
-const elapsedTime = document.getElementById("elapsedTime");
-const errorMsg = document.getElementById("errorMsg");
+document.getElementById('mp3Btn').onclick = function () {
+    outputType = 'MP3';
+    this.classList.add('active');
+    document.getElementById('mp4Btn').classList.remove('active');
+};
 
-uploadBtn.addEventListener("click", () => fileInput.click());
+document.getElementById('mp4Btn').onclick = function () {
+    outputType = 'MP4';
+    this.classList.add('active');
+    document.getElementById('mp3Btn').classList.remove('active');
+};
 
-fileInput.addEventListener("change", () => {
-  const file = fileInput.files[0];
-  if (!file) return;
+document.getElementById('startBtn').onclick = function () {
+    const fileInput = document.getElementById('audioFile');
+    if (!fileInput.files.length) {
+        alert('請選擇檔案');
+        return;
+    }
 
-  fileName.textContent = file.name;
-  errorMsg.textContent = "";
-  downloadLink.style.display = "none";
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('output_type', outputType);
 
-  const formData = new FormData();
-  formData.append("file", file);
+    document.getElementById('status').textContent = '混音合成中，需 1~2 分鐘內，請耐心等候。';
+    document.getElementById('progress').style.width = '0%';
+    timer = 0;
+    interval = setInterval(() => {
+        timer++;
+        document.getElementById('timer').textContent = `已經處理時間：${timer} 秒`;
+        let percent = Math.min(100, timer * 1.5); // 模擬進度
+        document.getElementById('progress').style.width = percent + '%';
+    }, 1000);
 
-  fetch("/upload", {
-    method: "POST",
-    body: formData,
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        uploadedFilePath = data.filepath;
-      } else {
-        errorMsg.textContent = data.message || "上傳失敗";
-      }
+    fetch('/upload', {
+        method: 'POST',
+        body: formData
     })
-    .catch((err) => {
-      console.error(err);
-      errorMsg.textContent = "檔案上傳錯誤";
+    .then(res => res.json())
+    .then(data => {
+        clearInterval(interval);
+        document.getElementById('status').textContent = '合成完成！點我下載檔案';
+        document.getElementById('status').style.cursor = 'pointer';
+        document.getElementById('status').onclick = () => {
+            window.location.href = `/download/${data.file}`;
+        };
     });
-});
-
-formatBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    formatBtns.forEach((b) => b.classList.remove("selected"));
-    btn.classList.add("selected");
-    selectedFormat = btn.dataset.format;
-  });
-});
-
-startBtn.addEventListener("click", () => {
-  if (!uploadedFilePath) {
-    errorMsg.textContent = "請先上傳音訊檔案";
-    return;
-  }
-
-  fetch("/synthesize", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ filepath: uploadedFilePath, format: selectedFormat }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        errorMsg.textContent = "";
-        pollingInterval = setInterval(checkProgress, 500);
-      } else {
-        errorMsg.textContent = data.message || "合成啟動失敗";
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      errorMsg.textContent = "發送合成請求錯誤";
-    });
-});
-
-function checkProgress() {
-  fetch("/progress")
-    .then((res) => res.json())
-    .then((data) => {
-      progressBar.style.width = `${data.percent}%`;
-      progressText.textContent = `處理進度：${data.percent}%`;
-      elapsedTime.textContent = `已處理時間：${Math.floor(data.seconds)} 秒`;
-
-      if (data.status === "done") {
-        clearInterval(pollingInterval);
-        downloadLink.href = "/download";
-        downloadLink.style.display = "inline-block";
-      } else if (data.status === "error") {
-        clearInterval(pollingInterval);
-        errorMsg.textContent = "合成失敗，請確認檔案格式與長度";
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      clearInterval(pollingInterval);
-      errorMsg.textContent = "進度查詢錯誤";
-    });
-}
+};
