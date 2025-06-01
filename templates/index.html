@@ -1,51 +1,51 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cetro - 5.M.A [reimagined] Challenge</title>
-  <link rel="stylesheet" href="/static/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CETRO - Vocal Mixer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
-  <div class="container">
-    <div class="header">
-      <img src="https://github.com/Novemk/vocal-mixerSTR/blob/main/default_cover.png?raw=true" alt="Logo" class="logo" />
-      <h1 class="title">CETRO - 5.M.A [reimagined] CHALLENGE</h1>
+    <div class="container">
+        <div class="frame">
+            <div class="title-box">
+                <img src="/static/logo.png" alt="Cetro Logo" class="logo">
+                <h1>CETRO - 5.M.A [reimagined] Challenge</h1>
+            </div>
+
+            <div class="form-section">
+                <label for="vocal" class="label-title">請上傳清唱音檔 (MP3 或 WAV)</label>
+                <div class="file-upload">
+                    <label for="vocal" class="file-label" id="fileLabel">上傳檔案：檔名</label>
+                    <input type="file" id="vocal" name="vocal" accept="audio/mp3,audio/wav">
+                </div>
+
+                <label for="singer" class="label-title">請輸入歌唱者名稱</label>
+                <input type="text" id="singer" name="singer" placeholder="例如：Cetro - 5.M.A">
+
+                <label class="label-title">選擇輸出格式</label>
+                <div class="output-options">
+                    <button class="format-btn active" id="formatMp3">MP3<br><span>（較快完成）</span></button>
+                    <button class="format-btn" id="formatMp4">MP4<br><span>（1:1 影片）</span></button>
+                </div>
+
+                <button id="startBtn" class="start-btn">開始合成</button>
+                <p class="hint" id="hintText">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
+
+                <div class="progress-bar">
+                    <div id="progressFill" class="fill" style="width: 0%"></div>
+                </div>
+                <p class="progress-text" id="progressText">0%</p>
+                <p class="time-counter" id="timeCounter">已經處理時間：0 秒</p>
+                <a id="downloadLink" href="#" class="download-link" style="display: none;">下載合成檔案</a>
+            </div>
+        </div>
     </div>
 
-    <form id="upload-form">
-      <label for="vocal" class="label">請上傳清唱音檔(mp3或wav)</label>
-      <div class="file-group">
-        <input type="file" id="vocal" name="vocal" accept=".mp3,.wav" hidden />
-        <button type="button" id="file-btn" class="file-button">上傳檔案：<span id="filename">檔名</span></button>
-      </div>
-
-      <div class="output-group">
-        <label class="label">選擇輸出格式</label>
-        <div class="format-buttons">
-          <button type="button" id="btn-mp3" class="format-button selected" data-format="mp3">MP3<br /><span class="small">(較快完成)</span></button>
-          <button type="button" id="btn-mp4" class="format-button" data-format="mp4">MP4<br /><span class="small">(1:1影片)</span></button>
-        </div>
-      </div>
-
-      <div class="action-group">
-        <button type="submit" id="start-btn" class="start-button">開始合成</button>
-        <p id="status-msg" class="status-message hidden">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
-        <div id="progress-wrap" class="progress-wrap hidden">
-          <div class="progress-bar">
-            <div id="progress-fill" class="progress-fill"></div>
-          </div>
-          <p><span id="progress-percent">0%</span></p>
-          <p id="elapsed-time">已經處理時間：0 秒</p>
-        </div>
-        <a id="download-link" class="download-button hidden" href="#" download>下載合成檔案</a>
-      </div>
-    </form>
-  </div>
-
-  <script src="/static/script.js"></script>
+    <script src="/static/script.js"></script>
 </body>
-
 </html>
