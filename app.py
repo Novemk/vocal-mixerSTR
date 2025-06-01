@@ -1,6 +1,7 @@
 import os
 import time
 import requests
+from datetime import datetime
 from flask import Flask, render_template, request, send_file, jsonify
 from werkzeug.utils import secure_filename
 from moviepy.editor import *
@@ -99,7 +100,17 @@ def upload():
 def download(filename):
     if not os.path.exists(filename):
         return "❌ 找不到合成檔案", 404
-    return send_file(filename, as_attachment=True)
+
+    # 自動命名格式：CETRO - 5.M.A - CHALLENGE YYYY-MM-DD hh-mm-ss
+    now = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+    ext = filename.split('.')[-1]
+    custom_name = f"CETRO - 5.M.A - CHALLENGE {now}.{ext}"
+
+    return send_file(
+        filename,
+        as_attachment=True,
+        download_name=custom_name  # ✅ Flask 2.0+ 支援命名
+    )
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
