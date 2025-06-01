@@ -2,94 +2,102 @@ let selectedFormat = "MP3";
 let uploadedFilePath = "";
 let pollingInterval = null;
 
-// 上傳按鈕
-document.getElementById("uploadBtn").addEventListener("click", () => {
-  document.getElementById("fileInput").click();
-});
+const uploadBtn = document.getElementById("uploadBtn");
+const fileInput = document.getElementById("fileInput");
+const fileName = document.getElementById("fileName");
+const formatBtns = document.querySelectorAll(".format-btn");
+const startBtn = document.getElementById("startBtn");
+const downloadLink = document.getElementById("downloadLink");
+const progressBar = document.getElementById("progressFill");
+const progressText = document.getElementById("progressText");
+const elapsedTime = document.getElementById("elapsedTime");
+const errorMsg = document.getElementById("errorMsg");
 
-// 上傳事件
-document.getElementById("fileInput").addEventListener("change", async (e) => {
-  const file = e.target.files[0];
+uploadBtn.addEventListener("click", () => fileInput.click());
+
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
   if (!file) return;
+
+  fileName.textContent = file.name;
+  errorMsg.textContent = "";
+  downloadLink.style.display = "none";
 
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch("/upload", {
+  fetch("/upload", {
     method: "POST",
     body: formData,
-  });
-
-  const result = await res.json();
-  if (result.success) {
-    uploadedFilePath = result.filepath;
-    document.getElementById("fileNameDisplay").innerText = `已上傳檔案：${result.filename}`;
-  } else {
-    alert("上傳失敗，請重試");
-  }
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        uploadedFilePath = data.filepath;
+      } else {
+        errorMsg.textContent = data.message || "上傳失敗";
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      errorMsg.textContent = "檔案上傳錯誤";
+    });
 });
 
-// 格式選擇
-document.querySelectorAll(".format-btn").forEach((btn) => {
+formatBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".format-btn").forEach(b => b.classList.remove("selected"));
+    formatBtns.forEach((b) => b.classList.remove("selected"));
     btn.classList.add("selected");
     selectedFormat = btn.dataset.format;
   });
 });
 
-// 開始合成
-document.getElementById("startBtn").addEventListener("click", async () => {
+startBtn.addEventListener("click", () => {
   if (!uploadedFilePath) {
-    alert("請先上傳清唱音檔");
+    errorMsg.textContent = "請先上傳音訊檔案";
     return;
   }
 
-  document.getElementById("statusMsg").style.display = "block";
-  document.getElementById("statusMsg").innerText = "正在合成中，請稍候...";
-  document.getElementById("downloadLink").style.display = "none";
-  document.getElementById("progressBar").style.width = "0%";
-  document.getElementById("timeDisplay").innerText = "已經處理時間：0秒";
-
-  await fetch("/synthesize", {
+  fetch("/synthesize", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      filepath: uploadedFilePath,
-      format: selectedFormat,
-    }),
-  });
-
-  pollingInterval = setInterval(checkProgress, 1000);
+    body: JSON.stringify({ filepath: uploadedFilePath, format: selectedFormat }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        errorMsg.textContent = "";
+        pollingInterval = setInterval(checkProgress, 500);
+      } else {
+        errorMsg.textContent = data.message || "合成啟動失敗";
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      errorMsg.textContent = "發送合成請求錯誤";
+    });
 });
 
-// 每秒更新進度
-async function checkProgress() {
-  try {
-    const res = await fetch("/progress");
-    const data = await res.json();
+function checkProgress() {
+  fetch("/progress")
+    .then((res) => res.json())
+    .then((data) => {
+      progressBar.style.width = `${data.percent}%`;
+      progressText.textContent = `處理進度：${data.percent}%`;
+      elapsedTime.textContent = `已處理時間：${Math.floor(data.seconds)} 秒`;
 
-    const percent = Math.floor(data.percent);
-    const seconds = Math.floor(data.seconds);
-
-    document.getElementById("progressBar").style.width = `${percent}%`;
-    document.getElementById("statusMsg").innerText = `目前進度：${percent}%`;
-    document.getElementById("timeDisplay").innerText = `已經處理時間：${seconds}秒`;
-
-    if (percent >= 100 && data.status === "done") {
+      if (data.status === "done") {
+        clearInterval(pollingInterval);
+        downloadLink.href = "/download";
+        downloadLink.style.display = "inline-block";
+      } else if (data.status === "error") {
+        clearInterval(pollingInterval);
+        errorMsg.textContent = "合成失敗，請確認檔案格式與長度";
+      }
+    })
+    .catch((err) => {
+      console.error(err);
       clearInterval(pollingInterval);
-      document.getElementById("downloadLink").style.display = "block";
-      document.getElementById("downloadLink").href = "/download";
-      document.getElementById("statusMsg").innerText = "✅ 合成完成，可下載！";
-    }
-
-    if (data.status === "error") {
-      clearInterval(pollingInterval);
-      document.getElementById("statusMsg").innerText = "❌ 合成失敗（音訊過長或格式錯誤）";
-    }
-
-  } catch (err) {
-    clearInterval(pollingInterval);
-    document.getElementById("statusMsg").innerText = "⚠️ 與伺服器連線失敗";
-  }
+      errorMsg.textContent = "進度查詢錯誤";
+    });
 }
