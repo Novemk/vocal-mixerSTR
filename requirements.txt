@@ -1,7 +1,9 @@
-Flask==2.2.5
-pydub==0.25.1
+Flask
+pydub
+requests
 moviepy==1.0.3
-imageio==2.31.1
-imageio-ffmpeg==0.4.8
-decorator==4.4.2
-requests==2.32.3
+imageio
+imageio-ffmpeg
+decorator
+werkzeug==2.3.7  # 避免與 pydub 或 flask upload 衝突
+tqdm
