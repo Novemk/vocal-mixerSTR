@@ -1,77 +1,76 @@
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const uploadInput = document.getElementById("vocal");
-    const fileName = document.getElementById("file-name");
-    const formatButtons = document.querySelectorAll(".format-select button");
-    const startButton = document.getElementById("start");
-    const progressBar = document.querySelector(".progress-bar");
-    const statusMessage = document.getElementById("status-message");
-    const downloadLink = document.getElementById("download-link");
-    const timeCounter = document.getElementById("elapsed-time");
+let selectedFormat = "MP3";
+let uploadedFilePath = "";
+let pollingInterval = null;
 
-    let selectedFormat = "mp3";
-    let interval;
-
-    uploadInput.addEventListener("change", function () {
-        const file = uploadInput.files[0];
-        if (file) {
-            fileName.textContent = file.name;
-        }
-    });
-
-    formatButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            formatButtons.forEach(btn => btn.classList.remove("selected"));
-            button.classList.add("selected");
-            selectedFormat = button.dataset.format;
-        });
-    });
-
-    startButton.addEventListener("click", function () {
-        const file = uploadInput.files[0];
-        const singer = document.getElementById("singer").value.trim();
-
-        if (!file) {
-            alert("請選擇清唱檔案。");
-            return;
-        }
-
-        startButton.disabled = true;
-        statusMessage.textContent = "混音合成中，需 1~2 分鐘內，請耐心等候。";
-        progressBar.style.width = "0%";
-        progressBar.textContent = "0%";
-
-        let startTime = Date.now();
-        interval = setInterval(() => {
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            timeCounter.textContent = `已處理時間：${elapsed} 秒`;
-        }, 1000);
-
-        const formData = new FormData();
-        formData.append("vocal", file);
-        formData.append("singer", singer);
-        formData.append("format", selectedFormat);
-
-        fetch("/upload", {
-            method: "POST",
-            body: formData
-        })
-            .then(res => res.json())
-            .then(data => {
-                clearInterval(interval);
-                progressBar.style.width = "100%";
-                progressBar.textContent = "100%";
-                statusMessage.textContent = "混音完成！";
-                if (data.video_url) {
-                    downloadLink.href = data.video_url;
-                    downloadLink.style.display = "block";
-                }
-            })
-            .catch(err => {
-                clearInterval(interval);
-                statusMessage.textContent = "合成失敗，請重試。";
-                console.error(err);
-            });
-    });
+// 檔案上傳按鈕
+document.getElementById("uploadBtn").addEventListener("click", () => {
+  document.getElementById("fileInput").click();
 });
-</script>
+
+document.getElementById("fileInput").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch("/upload", {
+    method: "POST",
+    body: formData,
+  });
+
+  const result = await res.json();
+  if (result.success) {
+    uploadedFilePath = result.filepath;
+    document.getElementById("fileNameDisplay").innerText = `已上傳檔案：${result.filename}`;
+  } else {
+    alert("上傳失敗，請重試");
+  }
+});
+
+// 格式選擇按鈕切換樣式
+document.querySelectorAll(".format-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".format-btn").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    selectedFormat = btn.dataset.format;
+  });
+});
+
+// 開始合成
+document.getElementById("startBtn").addEventListener("click", async () => {
+  if (!uploadedFilePath) {
+    alert("請先上傳清唱音檔");
+    return;
+  }
+
+  document.getElementById("statusMsg").style.display = "block";
+  document.getElementById("downloadLink").style.display = "none";
+  document.getElementById("progressBar").style.width = "0%";
+  document.getElementById("timeDisplay").innerText = "已經處理時間：0秒";
+
+  await fetch("/synthesize", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      filepath: uploadedFilePath,
+      format: selectedFormat,
+    }),
+  });
+
+  pollingInterval = setInterval(checkProgress, 1000);
+});
+
+async function checkProgress() {
+  const res = await fetch("/progress");
+  const data = await res.json();
+
+  document.getElementById("progressBar").style.width = `${data.percent}%`;
+  document.getElementById("timeDisplay").innerText = `已經處理時間：${Math.floor(data.seconds)}秒`;
+
+  if (data.percent >= 100 && data.status === "done") {
+    clearInterval(pollingInterval);
+    document.getElementById("downloadLink").style.display = "block";
+    document.getElementById("downloadLink").href = "/download";
+  }
+}
