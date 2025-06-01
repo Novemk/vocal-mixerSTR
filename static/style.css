@@ -59,7 +59,7 @@ def upload():
         combined.export(temp_audio, format="mp3")
 
         # 封面圖 + 音訊生成影片
-        cover = ImageClip("default_cover.png", duration=90)
+        cover = ImageClip("static/cover.png", duration=90)
         cover = cover.resize(width=512)
         cover = cover.set_audio(AudioFileClip(temp_audio))
         cover = cover.set_duration(90)
