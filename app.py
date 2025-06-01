@@ -43,36 +43,48 @@ def upload():
     output_filename = f"output_{timestamp}.{output_type.lower()}"
     output_path = output_filename
 
-    if output_type == "MP4":
-        # 處理音訊
-        vocal = AudioSegment.from_file(input_filename)
-        bgm = AudioSegment.from_file("bgm.mp3")
+if output_type == "MP4":
+    # 載入音訊
+    vocal = AudioSegment.from_file(input_filename)
+    bgm = AudioSegment.from_file("bgm.mp3")
 
-        max_duration_ms = 90 * 1000
-        vocal = vocal[:max_duration_ms]
-        bgm = bgm[:max_duration_ms]
+    # 限制長度為 90 秒
+    max_duration_ms = 90 * 1000
+    vocal = vocal[:max_duration_ms]
+    bgm = bgm[:max_duration_ms]
 
-        combined = bgm.overlay(vocal)
-        temp_audio = f"temp_{timestamp}.mp3"
-        combined.export(temp_audio, format="mp3")
+    # 混音處理
+    combined = bgm.overlay(vocal)
+    temp_audio = f"temp_{timestamp}.mp3"
+    combined.export(temp_audio, format="mp3")
 
-        # 合成影片
-        cover = ImageClip("default_cover.png", duration=90)
-        cover = cover.set_audio(AudioFileClip(temp_audio))
-        cover = cover.set_duration(90)
-        cover = cover.set_fps(1)
-        cover.write_videofile(
-            output_path,
-            codec="libx264",
-            audio_codec="aac",
-            bitrate="800k",
-            threads=1,
-            preset="ultrafast"
-        )
+    # 封面圖 + 音訊生成影片
+    cover = ImageClip("default_cover.png", duration=90)
 
-        # 清除暫存音訊檔
-        if os.path.exists(temp_audio):
-            os.remove(temp_audio)
+    # ✅ 強制縮小畫質降低壓力
+    cover = cover.resize(width=512)
+
+    cover = cover.set_audio(AudioFileClip(temp_audio))
+    cover = cover.set_duration(90)
+    cover = cover.set_fps(1)
+
+    print("🎞️ 開始輸出影片檔案：", output_path)
+    cover.write_videofile(
+        output_path,
+        codec="libx264",
+        audio_codec="aac",
+        bitrate="800k",
+        threads=1,
+        preset="ultrafast",
+        remove_temp=True,
+        write_logfile=False
+    )
+    print("✅ 🎬 影片生成完成！輸出於：", output_path)
+
+    # 清除暫存
+    if os.path.exists(temp_audio):
+        os.remove(temp_audio)
+
 
     else:
         # MP3 輸出
