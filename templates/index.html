@@ -1,41 +1,38 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CETRO - 5.M.A Remix Challenge</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>清唱混音合成器</title>
+  <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>CETRO - 5.M.A【REIMAGINED】</h1>
-    <h2>CHALLENGE</h2>
-
-    <!-- 上傳 -->
-    <p>請上傳清唱音檔（mp3 或 wav）</p>
-    <input type="file" id="fileInput" accept=".mp3,.wav" hidden />
-    <button id="uploadBtn">上傳檔案</button>
-    <p id="fileNameDisplay" class="file-name"></p>
-
-    <!-- 輸出格式 -->
-    <p>選擇輸出格式</p>
-    <div class="format-options">
-      <button class="format-btn selected" data-format="MP3" id="mp3Btn">MP3（較快完成）</button>
-      <button class="format-btn" data-format="MP4" id="mp4Btn">MP4（1:1影片）</button>
+    <h1>清唱混音合成器</h1>
+    <div class="upload-box">
+      <input type="file" id="fileInput" accept="audio/*" hidden />
+      <button id="uploadBtn">上傳檔案</button>
+      <span id="fileName">尚未選擇檔案</span>
     </div>
 
-    <!-- 開始合成 -->
+    <div class="format-select">
+      <button class="format-btn" data-format="MP3">MP3</button>
+      <button class="format-btn" data-format="MP4">MP4</button>
+    </div>
+
+    <div class="progress-box">
+      <div id="progressBar">
+        <div id="progressFill"></div>
+      </div>
+      <span id="progressText">處理進度：0%</span>
+      <span id="elapsedTime">已處理時間：0 秒</span>
+    </div>
+
     <button id="startBtn">開始合成</button>
-    <p id="statusMsg" class="status-msg" style="display:none;"></p>
-    <div class="progress-bar-wrapper">
-      <div id="progressBar" class="progress-bar"></div>
-    </div>
-    <p id="timeDisplay">已經處理時間：0秒</p>
-
-    <!-- 下載 -->
-    <a id="downloadLink" href="#" class="download-link" style="display: none;">下載合成檔案</a>
+    <a id="downloadLink" href="#" download style="display: none;">下載合成檔案</a>
+    <div id="errorMsg" class="error"></div>
   </div>
 
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script src="/static/script.js"></script>
 </body>
 </html>
