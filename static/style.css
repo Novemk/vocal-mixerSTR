@@ -1,124 +1,131 @@
-<style>
+/* 通用設定 */
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background: #ffffff url('/static/bg-deco.png') no-repeat right top;
-    background-size: contain;
+  font-family: 'Helvetica Neue', sans-serif;
+  background: linear-gradient(to bottom, #f0f0f0, #dcdcdc);
+  color: #111;
+  text-align: center;
+  padding: 40px 20px;
 }
 
 .container {
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 30px;
-    background: #f4f4f4;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    border: 5px solid #1c1c1c;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #fff;
+  border: 3px solid #000;
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
 }
 
 h1 {
-    font-size: 28px;
-    color: #1c1c1c;
-    margin-bottom: 20px;
+  font-size: 18px;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
 }
 
-.upload-label {
-    display: inline-block;
-    background: #1c1c1c;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-bottom: 15px;
+h2 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  letter-spacing: 4px;
 }
 
-.upload-label:hover {
-    background: #333333;
+p {
+  font-size: 14px;
+  margin: 8px 0;
 }
 
-#file-name {
-    margin-top: 5px;
-    font-size: 14px;
-    color: #333;
+/* 上傳與合成按鈕 */
+button {
+  background-color: #111;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  margin: 12px 6px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
-input[type="file"] {
-    display: none;
+button:hover {
+  background-color: #333;
 }
 
-input[type="text"] {
-    width: 70%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #aaa;
-    margin: 10px 0;
+/* 格式選擇區塊 */
+.format-options {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.format-select button {
-    padding: 10px 20px;
-    margin: 10px;
-    border: 2px solid #aaa;
-    border-radius: 10px;
-    background: #fff;
-    font-weight: bold;
-    cursor: pointer;
+.format-btn {
+  background-color: #000;
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.format-select button.selected {
-    border-color: #ffd700;
-    color: #ffd700;
+.format-btn:hover {
+  background-color: #222;
 }
 
-button#start {
-    background: #ffd700;
-    color: #000;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 20px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+.format-btn.selected {
+  border: 2px solid #ffd700;
+  color: #ffd700;
+  font-weight: bold;
 }
 
-button#start:hover {
-    background: #ffc800;
-}
-
-#status-message {
-    margin-top: 20px;
-    font-size: 14px;
-    color: #555;
-}
-
-.progress {
-    width: 100%;
-    background-color: #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 10px;
+/* 進度條區域 */
+.progress-bar-wrapper {
+  width: 100%;
+  background-color: #ccc;
+  border-radius: 8px;
+  height: 16px;
+  margin: 12px 0;
+  overflow: hidden;
 }
 
 .progress-bar {
-    width: 0%;
-    height: 20px;
-    background-color: #ffd700;
-    text-align: center;
-    line-height: 20px;
-    color: #000;
-    font-weight: bold;
-    transition: width 0.5s;
+  height: 100%;
+  width: 0%;
+  background-color: #ffd700;
+  transition: width 0.5s ease;
 }
 
-#download-link {
-    display: none;
-    margin-top: 20px;
-    font-size: 16px;
-    color: #0000ee;
-    text-decoration: underline;
+/* 狀態訊息 */
+.status-msg {
+  font-size: 13px;
+  color: #339;
+  display: none;
 }
-</style>
+
+/* 檔名顯示 */
+#fileNameDisplay {
+  font-size: 13px;
+  color: #666;
+  margin-top: -6px;
+  margin-bottom: 12px;
+}
+
+/* 下載連結 */
+.download-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #000;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.download-link:hover {
+  background-color: #333;
+}
