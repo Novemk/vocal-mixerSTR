@@ -1,4 +1,4 @@
-/* 🔤 網頁整體字型與背景設定 */
+/* 🌐 整體頁面樣式設定 */
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 0;
@@ -10,13 +10,13 @@ body {
   height: 100vh;
 }
 
-/* 🖼️ 白色卡片區域 + 封面背景圖 */
+/* 📦 中央內容容器樣式（含背景圖） */
 .container {
-  width: 930px;
-  height: 1120px;
+  width: 600px;
+  height: 723px;
   padding: 20px;
   box-sizing: border-box;
-  background-image: url('/static/cover.png'); /* 封面圖路徑 */
+  background-image: url('/static/cover.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -28,59 +28,62 @@ body {
   align-items: center;
 }
 
-/* 🎀 標題樣式 */
+/* 🔠 主標題樣式 */
 h1 {
   text-align: center;
   color: #333;
 }
 
-/* 🔘 一般按鈕樣式 */
+/* 🟡 通用按鈕樣式（黃底黑字 + 黑框） */
 button {
   margin: 5px;
   padding: 10px 20px;
   font-size: 16px;
-  border: none;
+  border: 2px solid #000;
   border-radius: 6px;
   cursor: pointer;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #FFD700; /* 黃色背景 */
+  color: #000; /* 黑色文字 */
 }
 
-/* ✅ 被選中的按鈕 */
+/* ⚫ 已選中按鈕樣式（黑底黃字 + 黃框） */
 button.active {
-  background-color: #2196F3;
+  background-color: #000;      /* 黑色背景 */
+  color: #FFD700;              /* 黃色文字 */
+  border: 2px solid #FFD700;   /* 黃色框線 */
 }
 
-/* 🖱️ 按鈕懸停時淡出效果 */
+/* 🖱️ 滑過按鈕時稍微變淡 */
 button:hover {
   opacity: 0.9;
 }
 
-/* 📊 處理進度條 */
+/* 📊 進度條樣式 */
 #progress {
   height: 10px;
   width: 0%;
-  background-color: #2196F3;
+  background-color: #2196F3; /* 藍色進度條 */
   margin-top: 10px;
   transition: width 0.3s;
 }
 
-/* 💾 下載區塊 */
+/* 📁 合成後下載區塊間距 */
 #downloadSection {
   margin-top: 20px;
 }
 
-/* ⬇️ 下載按鈕樣式 */
+/* ⬇️ 合成完成後的下載按鈕樣式 */
 .download-btn {
   display: inline-block;
   padding: 10px 16px;
-  background-color: #673AB7;
+  background-color: #673AB7;  /* 紫色按鈕 */
   color: white;
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
 }
 
+/* 🖱️ 滑過下載按鈕時的顏色變化 */
 .download-btn:hover {
   background-color: #5E35B1;
 }
