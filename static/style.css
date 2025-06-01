@@ -1,114 +1,52 @@
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #1a1a1a;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+    font-family: sans-serif;
+    background: #f4f4f4;
+    text-align: center;
+    padding: 40px;
 }
 
 .container {
-  width: 400px;
-  background: #2a2a2a;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-  text-align: center;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 400px;
+    margin: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.upload-box {
-  margin-bottom: 1rem;
+h1, h2 {
+    margin-bottom: 10px;
 }
 
-#uploadBtn {
-  padding: 0.5rem 1rem;
-  background: #444;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+button {
+    padding: 10px 20px;
+    margin: 10px 5px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
 }
 
-#uploadBtn:hover {
-  background: #666;
+button.active {
+    background: gold;
+    color: black;
+    font-weight: bold;
 }
 
-#fileName {
-  margin-left: 0.5rem;
-  font-size: 0.9rem;
-  color: #ccc;
+.progress-bar {
+    height: 10px;
+    width: 100%;
+    background: #ccc;
+    margin-top: 10px;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
-.format-select {
-  margin: 1rem 0;
-}
-
-.format-btn {
-  padding: 0.4rem 1rem;
-  margin: 0 0.5rem;
-  border: 2px solid #fff;
-  background: transparent;
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.format-btn.selected {
-  border-color: #f5c000;
-  color: #f5c000;
-}
-
-.progress-box {
-  margin-top: 1rem;
-  text-align: left;
-}
-
-#progressBar {
-  width: 100%;
-  height: 16px;
-  background: #444;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-#progressFill {
-  height: 100%;
-  background: #f5c000;
-  width: 0%;
-  transition: width 0.4s ease;
-}
-
-#progressText,
-#elapsedTime {
-  display: block;
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
-}
-
-#startBtn {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background: #f5c000;
-  border: none;
-  color: #000;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-#downloadLink {
-  display: inline-block;
-  margin-top: 1rem;
-  color: #f5c000;
-  text-decoration: underline;
-  font-size: 0.95rem;
-}
-
-.error {
-  color: #ff6b6b;
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
+.progress {
+    height: 100%;
+    width: 0%;
+    background: gold;
+    transition: width 0.5s ease;
 }
