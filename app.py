@@ -43,7 +43,7 @@ def synthesize_audio(filepath, output_format):
     output_path = os.path.join(app.config["OUTPUT_FOLDER"], output_filename)
 
     try:
-        for _ in range(5):  # 模擬前期處理進度
+        for _ in range(5):
             time.sleep(0.5)
             progress["seconds"] += 0.5
             progress["percent"] += 10
@@ -56,7 +56,7 @@ def synthesize_audio(filepath, output_format):
 
         elif output_format == "MP4":
             audio = AudioFileClip(filepath)
-            if audio.duration > 180:  # 限制 3 分鐘
+            if audio.duration > 90:  # 限制 90 秒
                 progress["status"] = "error"
                 progress["filename"] = None
                 return
