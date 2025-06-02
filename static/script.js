@@ -73,37 +73,37 @@ function originalSynthesizeFunction() {
   })
     .then(res => res.json())
     .then(data => {
-      clearInterval(interval);
-      progressBar.style.width = '100%';
+  clearInterval(interval);
+  progressBar.style.width = '100%';
 
-      const now = new Date();
-      const formattedTime = now.toISOString().slice(0, 19).replace(/[:T]/g, '-');
-      const filename = `CETRO - 5.M.A - CHALLENGE ${formattedTime}.${outputType.toLowerCase()}`;
+  const now = new Date();
+  const formattedTime = now.toISOString().slice(0, 19).replace(/[:T]/g, '-');
+  const filename = `CETRO - 5.M.A - CHALLENGE ${formattedTime}.${outputType.toLowerCase()}`;
+  const fileURL = `/download/${data.file}`;
 
-      const fileURL = `/download/${data.file}`;
+  // ✅ 合成完成：改為下載按鈕
+  synthBtn.innerText = '合成完成！點我下載檔案';
+  synthBtn.disabled = false;
 
-      // ✅ 更新按鈕為下載狀態
-      synthBtn.innerText = '合成完成！點我下載檔案';
-      synthBtn.disabled = false;
-      synthBtn.onclick = () => {
-        window.location.href = fileURL;
+  // ✅ 點擊後觸發下載，然後重設為初始狀態
+  synthBtn.onclick = () => {
+    window.location.href = fileURL;
 
-        // 恢復為預設狀態
-        synthBtn.innerText = '開始合成';
-        synthBtn.disabled = true;
-        synthBtn.onclick = originalSynthesizeFunction;
-      };
+    // 重設狀態（重新綁定原始合成功能）
+    fileInput.value = '';
+    fileInput.dispatchEvent(new Event('change'));
+    outputType = 'MP3';
+    mp3Btn.classList.add('active');
+    mp4Btn.classList.remove('active');
+    progressBar.style.width = '0%';
+    timerText.textContent = '已經處理時間：0 秒';
+    statusText.textContent = '';
+    synthBtn.innerText = '開始合成';
+    synthBtn.disabled = true;
+    synthBtn.onclick = originalSynthesizeFunction;
+  };
+})
 
-      // ✅ 重置 UI 狀態（合成完成後）
-      fileInput.value = '';
-      fileInput.dispatchEvent(new Event('change'));
-      outputType = 'MP3';
-      mp3Btn.classList.add('active');
-      mp4Btn.classList.remove('active');
-      progressBar.style.width = '0%';
-      timerText.textContent = '已經處理時間：0 秒';
-      statusText.textContent = '';
-    })
     .catch(err => {
       clearInterval(interval);
       console.error('合成失敗', err);
