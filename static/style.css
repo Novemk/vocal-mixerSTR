@@ -69,6 +69,13 @@ button:active,
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* 滑鼠懸停時的上浮動畫 */
 button:hover {
   transform: translateY(-3px); /* 向上浮 3px */
