@@ -85,9 +85,23 @@ synthBtn.onclick = () => {
       a.className = 'download-btn';
       downloadSection.innerHTML = '';
       downloadSection.appendChild(a);
+      
+      // ✅ 重置 UI 狀態（合成完成後）
+      fileInput.value = ''; // 清除已選檔案
+      fileInput.dispatchEvent(new Event('change')); // ⬅️ 自動觸發狀態更新
+      synthBtn.disabled = true; // 再次禁用按鈕直到重新選檔
+      synthBtn.innerText = '開始合成'; // 恢復按鈕文字
 
-      synthBtn.disabled = true;
-      synthBtn.innerText = '開始合成';
+      // 重置格式選擇（預設回 MP3）
+      outputType = 'MP3';
+      mp3Btn.classList.add('active');
+      mp4Btn.classList.remove('active');
+
+      // 清空進度與計時
+      progressBar.style.width = '0%';
+      timerText.textContent = '已經處理時間：0 秒';
+      statusText.textContent = '';
+
     })
     .catch(err => {
       clearInterval(interval);
