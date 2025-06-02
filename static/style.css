@@ -79,7 +79,7 @@ button.active {
 
 /* 📦 進度條容器 */
 .progress-bar {
-  width: 100%;
+  width: 60%;
   max-width: 500px;
   height: 10px;
   background-color: #ddd;
@@ -119,6 +119,13 @@ button.active {
   background-color: #222; /* 可以加微變色也很不錯 */
 }
 
+.upload-hint {
+    margin-top: 80px; /* ↑↑ 上方間距，自行調整 px 數 */
+}
+
+#timer {
+    margin-bottom: 20px; /* ↓↓ 下方間距，視覺上會拉開和下載按鈕的距離 */
+}
 
 .wrapper {
   display: flex;
