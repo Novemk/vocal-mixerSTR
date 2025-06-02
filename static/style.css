@@ -51,17 +51,30 @@ button {
   background-color: #222;     /* 黑底 */
   color: #ffcc00;             /* 黃字 */
   font-weight: bold;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
 /* 被選取的按鈕 */
 button.active {
-  background-color: #ffcc00;  /* 黃底 */
-  color: #000;                /* 黑字 */
+  background-color: #ffcc00;
+  color: #000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* 滑鼠懸停效果 */
+/* ✨ 按鈕點擊時的壓下動畫 */
+button:active,
+.download-btn:active,
+.karaoke-box a:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* 滑鼠懸停時的上浮動畫 */
 button:hover {
-  opacity: 0.9;
+  transform: translateY(-3px); /* 向上浮 3px */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 柔和陰影 */
+  opacity: 0.95; /* 稍微透明，維持原本效果 */
+  transition: all 0.3s ease;
 }
 
 /* 📦 進度條容器 */
@@ -97,11 +110,15 @@ button:hover {
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .download-btn:hover {
-  background-color: #333;
+  transform: translateY(-3px); /* 上浮 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 陰影更立體 */
+  background-color: #222; /* 可以加微變色也很不錯 */
 }
+
 
 .wrapper {
   display: flex;
