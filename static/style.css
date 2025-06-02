@@ -124,7 +124,7 @@ button.active {
 }
 
 #timer {
-    margin-bottom: 20px; /* ↓↓ 下方間距，視覺上會拉開和下載按鈕的距離 */
+    margin-bottom: 0px; /* ↓↓ 下方間距，視覺上會拉開和下載按鈕的距離 */
 }
 
 .wrapper {
