@@ -18,6 +18,8 @@ synthBtn.disabled = true;
 // ✅ 檔案選擇變動 → 更新按鈕狀態
 fileInput.addEventListener('change', () => {
   synthBtn.disabled = !fileInput.files.length;
+  synthBtn.innerText = '開始合成';
+  synthBtn.onclick = originalSynthesizeFunction;
 });
 
 // ✅ 切換格式
@@ -33,7 +35,7 @@ mp4Btn.onclick = () => {
 };
 
 // ✅ 合成流程
-synthBtn.onclick = () => {
+function originalSynthesizeFunction() {
   console.log("🔘 合成按鈕被點擊了");
 
   // 防呆：沒檔案就跳警告，不執行後續
@@ -78,30 +80,29 @@ synthBtn.onclick = () => {
       const formattedTime = now.toISOString().slice(0, 19).replace(/[:T]/g, '-');
       const filename = `CETRO - 5.M.A - CHALLENGE ${formattedTime}.${outputType.toLowerCase()}`;
 
-      const a = document.createElement('a');
-      a.href = `/download/${data.file}`;
-      a.download = filename;
-      a.textContent = '合成完成！點我下載檔案';
-      a.className = 'download-btn';
-      downloadSection.innerHTML = '';
-      downloadSection.appendChild(a);
-      
-      // ✅ 重置 UI 狀態（合成完成後）
-      fileInput.value = ''; // 清除已選檔案
-      fileInput.dispatchEvent(new Event('change')); // ⬅️ 自動觸發狀態更新
-      synthBtn.disabled = true; // 再次禁用按鈕直到重新選檔
-      synthBtn.innerText = '開始合成'; // 恢復按鈕文字
+      const fileURL = `/download/${data.file}`;
 
-      // 重置格式選擇（預設回 MP3）
+      // ✅ 更新按鈕為下載狀態
+      synthBtn.innerText = '合成完成！點我下載檔案';
+      synthBtn.disabled = false;
+      synthBtn.onclick = () => {
+        window.location.href = fileURL;
+
+        // 恢復為預設狀態
+        synthBtn.innerText = '開始合成';
+        synthBtn.disabled = true;
+        synthBtn.onclick = originalSynthesizeFunction;
+      };
+
+      // ✅ 重置 UI 狀態（合成完成後）
+      fileInput.value = '';
+      fileInput.dispatchEvent(new Event('change'));
       outputType = 'MP3';
       mp3Btn.classList.add('active');
       mp4Btn.classList.remove('active');
-
-      // 清空進度與計時
       progressBar.style.width = '0%';
       timerText.textContent = '已經處理時間：0 秒';
       statusText.textContent = '';
-
     })
     .catch(err => {
       clearInterval(interval);
@@ -112,5 +113,6 @@ synthBtn.onclick = () => {
         synthBtn.disabled = !fileInput.files.length;
       }, 3000);
     });
-};
+}
 
+synthBtn.onclick = originalSynthesizeFunction;
