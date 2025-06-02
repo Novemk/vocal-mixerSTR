@@ -101,3 +101,13 @@ button:hover {
 .download-btn:hover {
   background-color: #333;
 }
+
+.credits {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 12px;
+    color: #777;
+    line-height: 1.6;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
