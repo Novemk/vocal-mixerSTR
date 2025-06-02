@@ -20,7 +20,8 @@
             <button id="mp4Btn">MP4（1:1影片）</button>
         </div>
         
-       <button id="synthesizeBtn" onclick="startSynthesis()">開始合成</button>
+       <button id="synthesizeBtn">開始合成</button>
+       <p class="hint-text">✨ 請先選擇檔案後再按下合成喔 ✨</p>
 
         <!-- 合成進行中文字 -->
         <p id="processingStatus">混音合成中，需 1~2 分鐘內，請耐心等候。</p>
@@ -67,29 +68,6 @@
 
     <script src="/static/script.js"></script>
 
-    <!-- 增加防呆機制 一次只能按一下-->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const synthBtn = document.getElementById("synthesizeBtn");
-  synthBtn.addEventListener("click", function () {
-    // 如果按鈕已經被禁用，就不做事
-    if (synthBtn.disabled) return;
-
-    // 禁用按鈕（防呆）
-    synthBtn.disabled = true;
-
-    // 可選：改變文字（增加使用者回饋感）
-    synthBtn.textContent = "合成中...";
-
-    // 這裡是妳的合成請求邏輯，可以加 fetch、AJAX 或其他功能
-    // 模擬合成延遲（例如 6 秒）
-    setTimeout(function () {
-      synthBtn.disabled = false;
-      synthBtn.textContent = "開始合成";
-    }, 6000);
-  });
-});
-</script>
 
 
 </body>
