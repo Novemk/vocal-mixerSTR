@@ -63,7 +63,7 @@ function originalSynthesizeFunction() {
   interval = setInterval(() => {
     timer++;
     timerText.textContent = `已經處理時間：${timer} 秒`;
-    let percent = Math.min(100, timer * 1.2);
+    let percent = Math.min(100, timer * 3); // 會更快顯示滿格
     progressBar.style.width = percent + '%';
   }, 1000);
 
