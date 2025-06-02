@@ -144,8 +144,10 @@ button:hover {
   margin-top: 2px;
   color: #4e9fd1;
   text-decoration: none;
+  transition: transform 0.2s ease, text-shadow 0.2s ease;
 }
 
 .karaoke-box a:hover {
+  transform: translateY(-2px); /* 👈 微微上浮 */
   text-decoration: underline;
 }
