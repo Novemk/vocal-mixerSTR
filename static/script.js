@@ -4,7 +4,7 @@ let interval;
 
 const mp3Btn = document.getElementById('mp3Btn');
 const mp4Btn = document.getElementById('mp4Btn');
-const startBtn = document.getElementById('startBtn');
+const synthBtn = document.getElementById('synthesizeBtn');
 const fileInput = document.getElementById('audioFile');
 const statusText = document.getElementById('status');
 const progressBar = document.getElementById('progress');
@@ -24,11 +24,15 @@ mp4Btn.onclick = () => {
     mp3Btn.classList.remove('active');
 };
 
-startBtn.onclick = () => {
+synthBtn.onclick = () => {
+    if (synthBtn.disabled) return;
     if (!fileInput.files.length) {
         alert('請選擇檔案');
         return;
     }
+
+    synthBtn.disabled = true;
+    synthBtn.innerText = '合成中...';
 
     const formData = new FormData();
     formData.append('file', fileInput.files[0]);
@@ -68,5 +72,17 @@ startBtn.onclick = () => {
         a.className = 'download-btn';
         downloadSection.innerHTML = '';
         downloadSection.appendChild(a);
+
+        synthBtn.disabled = false;
+        synthBtn.innerText = '開始合成';
+    })
+    .catch(err => {
+        clearInterval(interval);
+        console.error('合成失敗', err);
+        synthBtn.innerText = '合成失敗，請重試';
+        setTimeout(() => {
+            synthBtn.innerText = '開始合成';
+            synthBtn.disabled = false;
+        }, 3000);
     });
 };
