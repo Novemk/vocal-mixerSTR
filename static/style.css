@@ -120,7 +120,7 @@ button.active {
 }
 
 .upload-hint {
-    margin-top: 80px; /* ↑↑ 上方間距，自行調整 px 數 */
+    margin-top: 100px; /* ↑↑ 上方間距，自行調整 px 數 */
 }
 
 #timer {
