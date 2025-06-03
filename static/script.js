@@ -1,6 +1,6 @@
 // ============================================================
-//  📜 script.js v1.2 - 清唱混音網站 前端邏輯
-//  ✅ 增量支援：key選擇、使用者名稱傳送（保留所有原功能）
+//  📜 script.js v1.3 - 清唱混音網站 前端邏輯
+//  ✅ 增量支援：key選擇、使用者名稱傳送、安全處理空值（保留所有原功能）
 // ============================================================
 
 let outputType = 'MP3';
@@ -57,12 +57,18 @@ function originalSynthesizeFunction() {
   synthBtn.disabled = true;
   synthBtn.innerText = '合成中...';
 
+  // ✅ 安全處理欄位值
+  let delay = parseFloat(delayInput.value.trim());
+  if (isNaN(delay) || delay < 0) delay = 0;
+
+  const username = usernameInput.value.trim();
+
   const formData = new FormData();
   formData.append('file', fileInput.files[0]);
   formData.append('output_type', outputType);
-  formData.append('delay', delayInput.value);
-  formData.append('key', keySelect.value);                      // ✅ 加入 Key
-  formData.append('username', usernameInput.value);             // ✅ 加入 使用者名稱
+  formData.append('delay', delay);
+  formData.append('key', keySelect.value);
+  formData.append('username', username);
 
   statusText.textContent = '混音合成中，需 1~2 分鐘內，請耐心等候。';
   statusText.style.cursor = 'default';
