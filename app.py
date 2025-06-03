@@ -99,8 +99,9 @@ def upload():
                     color='#e48cb6',
                     font=font_path,
                     stroke_color='white',
-                    stroke_width=3,
-                    method='label'
+                    stroke_width=2,
+                    method='caption',
+                    size=(cover.w // 2, None)
                 )
                 txt_clip = txt_clip.set_position((cover.w - txt_clip.w - 36, 36)).set_duration(cover.duration)
                 cover = CompositeVideoClip([cover, txt_clip])
