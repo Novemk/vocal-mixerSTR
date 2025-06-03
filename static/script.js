@@ -10,7 +10,7 @@ let interval;
 // 🎛️ UI 元件取得
 const mp3Btn = document.getElementById('mp3Btn');
 const mp4Btn = document.getElementById('mp4Btn');
-const synthBtn = document.getElementById('synthesizeBtn');
+const synthBtn = document.getElementById('synthesizeButton');
 const fileInput = document.getElementById('audioFile');
 const statusText = document.getElementById('status');
 const progressBar = document.getElementById('progress');
