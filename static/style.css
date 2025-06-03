@@ -1,7 +1,23 @@
 /* ============================================================
    🎨 style.css v1.2 - 清唱混音網站
    ✅ 保留原樣式，增補 key 與 username 欄位，維持一致排版與間距
+   ✅ 調整影片右上角加字距離（影片加字 padding）
    ============================================================ */
+
+/* 🎥 加字影片文字位置調整（右上角內縮） */
+.video-overlay-text {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 4px 12px;
+  font-size: 36px;
+  color: white;
+  font-family: "Arial Black", sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.25); /* 半透明背景以利閱讀 */
+  border-radius: 6px;
+  z-index: 10;
+}
 
 /* 全域樣式設定 */
 body {
@@ -32,6 +48,33 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+/* 🎯 延遲欄位一行排版容器 */
+.delay-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  width: 80%;
+}
+
+.delay-row label {
+  white-space: nowrap;
+  font-size: 15px;
+  color: #333;
+}
+
+.delay-row input[type="number"] {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* 標題樣式 */
