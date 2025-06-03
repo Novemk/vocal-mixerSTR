@@ -96,10 +96,10 @@ def upload():
         cover = cover.set_audio(AudioFileClip(temp_audio))
         cover = cover.set_fps(1)
 
-        # 📝 加入使用者名稱文字到封面（右上角）
+        # 📝 加入使用者名稱文字到封面（右上角內縮）
         if username:
             txt_clip = TextClip(username, fontsize=36, color='white', font="Arial-Bold")
-            txt_clip = txt_clip.set_position(("right", "top")).set_duration(cover.duration)
+            txt_clip = txt_clip.set_position(("right-60", "top+36")).set_duration(cover.duration)
             cover = CompositeVideoClip([cover, txt_clip])
 
         # 📤 輸出影片
