@@ -98,9 +98,12 @@ def upload():
 
         # 📝 加入使用者名稱文字到封面（右上角內縮）
         if username:
-            txt_clip = TextClip(username, fontsize=36, color='white', font="Arial-Bold")
-            txt_clip = txt_clip.set_position(("right-60", "top+36")).set_duration(cover.duration)
-            cover = CompositeVideoClip([cover, txt_clip])
+            try:
+                txt_clip = TextClip(username, fontsize=36, color='#e48cb6', font="DejaVu-Sans-Bold")
+                txt_clip = txt_clip.set_position((cover.w - txt_clip.w - 60, 36)).set_duration(cover.duration)
+                cover = CompositeVideoClip([cover, txt_clip])
+            except Exception as e:
+                print("⚠️ 加字失敗，跳過：", e)
 
         # 📤 輸出影片
         print("🎞️ 開始輸出影片檔案：", output_path)
