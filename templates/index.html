@@ -9,69 +9,83 @@
   <div class="wrapper">
     <div class="container">
 
+        <!-- 🟡 上傳提示語 -->
         <p class="upload-hint">💛 請上傳清唱音檔（mp3 或 wav）🖤</p>
         
-
+        <!-- 🔧 延遲設定輸入欄位 -->
         <label for="delayInput">人聲延遲（秒）：</label>
         <input type="number" id="delayInput" value="0" min="0" step="0.1" style="margin-bottom: 10px;">
 
+        <!-- 🎵 音訊檔案選擇 -->
         <input type="file" id="audioFile">
+
+        <!-- 🎞️ 輸出格式選擇按鈕 -->
         <div class="btn-group">
             <button id="mp3Btn" class="active">MP3（較快完成）</button>
             <button id="mp4Btn">MP4（1:1影片）</button>
         </div>
-        
-     
-      ✨ 有檔案才能點合成喔 ✨
 
-        <!-- 合成進行中文字 -->
+        <!-- 🎼 Key 選擇下拉選單 -->
+        <label for="keySelect">選擇伴奏 Key：</label>
+        <select id="keySelect">
+          <option value="0">原Key（+0）</option>
+          <option value="3">升Key（+3）</option>
+          <option value="4">升Key（+4）</option>
+          <option value="5">升Key（+5）</option>
+        </select>
+
+        <!-- 📝 使用者名稱輸入欄位 -->
+        <label for="usernameInput">輸入名稱（封面右上角文字）：</label>
+        <input type="text" id="usernameInput" placeholder="例如：My Lady">
+
+        <!-- 🔔 提示：檔案未選擇時無法合成 -->
+        <p>✨ 有檔案才能點合成喔 ✨</p>
+
+        <!-- 📣 處理中提示文字 -->
         <p id="processingStatus">合成可能需 1~2 分鐘，請耐心等候。</p>
 
-        <!-- 進度條與時間 -->
+        <!-- ⏳ 進度條與計時器 -->
         <div class="progress-bar">
             <div id="progress" class="progress"></div>
         </div>
         <p id="timer">已經處理時間：0 秒</p>
 
+        <!-- ⬇️ 下載區塊（完成後顯示） -->
         <div id="downloadSection"></div>
 
+        <!-- 🚀 合成啟動按鈕 -->
         <button id="synthesizeBtn">開始合成</button>
 
         <!-- ✅ 合成完成提示（像按鈕） -->
         <p id="status" class="download-btn" style="display: none;">處理完成！點我下載檔案！</p>
     </div> <!-- container 結束 -->
 
-   <footer class="credits">
-    original lyricist/composer | 冰霧 Eisnebel<br>
+    <!-- 🎵 音樂與影片來源/製作資訊區 -->
+    <footer class="credits">
+      original lyricist/composer | 冰霧 Eisnebel<br>
+      <a href="https://www.youtube.com/shorts/b7goxzEg4_M" target="_blank">
+        ❄️ 5MA之歌 Shorts ver. | 冰霧 Eisnebel
+      </a><br>
+      beat | Soulkiller "Love Her"<br>
+      lyricist/composer | Cetro<br>
+      vocal | Cetro<br>
+      rearrangement | Cetro<br>
+      <a href="https://www.youtube.com/watch?v=4y3xEWOP7z4" target="_blank">
+        Cetro - 5 M.A. (reimagined) [instrumental] ver.
+      </a><br>
 
-    <a href="https://www.youtube.com/shorts/b7goxzEg4_M" target="_blank">
-      ❄️ 5MA之歌 Shorts ver. | 冰霧 Eisnebel
-    </a><br>
-    beat | Soulkiller "Love Her"<br>
-    lyricist/composer | Cetro<br>
-    vocal | Cetro<br>
-    rearrangement | Cetro<br>
-
-    <a href="https://www.youtube.com/watch?v=4y3xEWOP7z4" target="_blank">
-      Cetro - 5 M.A. (reimagined) [instrumental] ver.
-    </a><br>
-
-  <div class="karaoke-box">
-    
-  <a href="https://www.youtube.com/watch?v=r4zkYQK3_DM" target="_blank">
-    🎤 5.M.A 卡拉OK字幕（附人聲版）
-  </a>
-  <a href="https://www.youtube.com/watch?v=CrIvDuYZ-hI" target="_blank">
-    🎤 5.M.A 卡拉OK字幕（伴奏版）
-  </a>
-  </div>
-       
-  </footer>
+      <div class="karaoke-box">
+        <a href="https://www.youtube.com/watch?v=r4zkYQK3_DM" target="_blank">
+          🎤 5.M.A 卡拉OK字幕（附人聲版）
+        </a>
+        <a href="https://www.youtube.com/watch?v=CrIvDuYZ-hI" target="_blank">
+          🎤 5.M.A 卡拉OK字幕（伴奏版）
+        </a>
+      </div>
+    </footer>
   </div> <!-- wrapper 結束 -->
 
-    <script src="/static/script.js"></script>
-
-
-
+  <!-- 📜 前端邏輯與請求腳本 -->
+  <script src="/static/script.js"></script>
 </body>
 </html>
