@@ -9,12 +9,12 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  padding: 4px 12px;
-  font-size: 36px;
-  color: white;
-  font-family: "Arial Black", sans-serif;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  background-color: rgba(0, 0, 0, 0.25);
+  padding: 14px 12px;
+  font-size: 36px;         /* 🅰️ 字體大小：這行調整 */
+  color: #e48cb6;           /* 🎨 字體顏色：這行調整 */
+  font-family: 'Rubik Mono One', 'Noto Sans TC', sans-serif;
+  text-shadow: 2px 2px 4px rgb(255, 255, 255);
+  background-color: rgba(255, 255, 255, 0.924);
   border-radius: 6px;
   z-index: 10;
 }
@@ -30,9 +30,10 @@ body {
   height: 100vh;
 }
 
+/* 容器 */
 .container {
-  width: 500px;
-  height: 660px;
+  width: 570px;
+  height: 680px;
   padding: 20px;
   box-sizing: border-box;
   background-color: #ffffff;
@@ -54,7 +55,7 @@ body {
   justify-content: center;
   gap: 8px;
   margin-bottom: 12px;
-  width: 10%;
+  width: 20%;
 }
 
 .delay-row label {
@@ -160,7 +161,7 @@ button.active {
 }
 
 .upload-hint {
-  margin-top: 130px; /* 上傳清唱提示語的位置 */
+  margin-top: 170px; /* 上傳清唱提示語的位置 */
 }
 
 #timer {
