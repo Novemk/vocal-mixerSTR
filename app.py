@@ -89,20 +89,18 @@ def upload():
         temp_audio = f"temp_{timestamp}.mp3"
         combined.export(temp_audio, format="mp3")
 
+        # 🖼️ 使用預設封面圖並加上音訊
+        cover = ImageClip("default_cover.png", duration=120)
+        cover = cover.resize(width=512)
+        cover = cover.set_duration(120)
+        cover = cover.set_audio(AudioFileClip(temp_audio))
+        cover = cover.set_fps(1)
+
         # 📝 加入使用者名稱文字到封面（右上角內縮）
         if username:
             try:
-                font_path = "GenSenRounded2TW-H-01.ttf"  # 使用者上傳的字體
-                txt_clip = TextClip(
-                    username,
-                    fontsize=36,
-                    color='#e48cb6',
-                    font=font_path,
-                    stroke_color='white',
-                    stroke_width=2,
-                    method='caption',
-                    size=(cover.w // 2, None)
-                )
+                font_path = "GenSenRounded2TW-H-01.ttf"  # 自訂中文字體
+                txt_clip = TextClip(username, fontsize=36, color='#e48cb6', font=font_path, method='label')
                 txt_clip = txt_clip.set_position((cover.w - txt_clip.w - 36, 36)).set_duration(cover.duration)
                 cover = CompositeVideoClip([cover, txt_clip])
             except Exception as e:
