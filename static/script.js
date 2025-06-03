@@ -20,6 +20,13 @@ const delayInput = document.getElementById('delayInput');
 const keySelect = document.getElementById('keySelect');          // ✅ 新增 Key
 const usernameInput = document.getElementById('usernameInput');  // ✅ 新增 使用者名稱
 
+// ✅ 防呆：限制延遲秒數最多 20 秒
+delayInput.addEventListener("input", () => {
+  if (parseFloat(delayInput.value) > 20) {
+    delayInput.value = 20;
+  }
+});
+
 // ✅ 預設禁用按鈕（若未選檔案）
 synthBtn.disabled = true;
 
